@@ -5,10 +5,12 @@ import { fontManager } from './utils/FontManager';
 const shouldRasterizeText = () => {
   try {
     if (window.psdImportOptions && typeof window.psdImportOptions.rasterizeText === 'boolean') {
+      console.log('使用指定的文字导入模式:', window.psdImportOptions.rasterizeText ? '位图模式' : '可编辑模式');
       return window.psdImportOptions.rasterizeText;
     }
   } catch (e) {}
-  return true; // 默认开启：将文字以位图导入确保完全一致
+  console.log('使用默认文字导入模式: 可编辑模式');
+  return false; // 默认关闭：导入为可编辑文字，支持编辑功能
 };
 
 /**

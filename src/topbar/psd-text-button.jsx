@@ -56,6 +56,31 @@ export const PSDTextButton = observer(({ store }) => {
     psdTextManager.exportPSDTextInfo();
   };
 
+  // 测试编辑器
+  const testEditor = () => {
+    // 创建一个测试文字元素
+    const testElement = {
+      type: 'text',
+      text: '测试PSD文字编辑',
+      fontSize: 24,
+      fontFamily: 'Arial',
+      fill: '#000000',
+      custom: {
+        fromPSD: true,
+        fromTextLayer: true,
+        originalText: '测试PSD文字编辑',
+        rasterized: false,
+        psdTextLayer: true
+      },
+      set: function(props) {
+        Object.assign(this, props);
+        console.log('测试元素已更新:', props);
+      }
+    };
+    
+    psdTextManager.openTextEditor(testElement);
+  };
+
   // 菜单内容
   const menuContent = (
     <Menu>
@@ -91,22 +116,41 @@ export const PSDTextButton = observer(({ store }) => {
             text="导出文字信息"
             onClick={exportTextInfo}
           />
+          
+          <MenuDivider />
+          
+          <MenuItem
+            icon="code"
+            text="测试编辑器"
+            onClick={testEditor}
+          />
         </>
       )}
       
       {psdTextElements.length === 0 && (
-        <MenuItem
-          icon="info-sign"
-          text="没有找到PSD文字"
-          disabled
-        />
+        <>
+          <MenuItem
+            icon="info-sign"
+            text="没有找到PSD文字"
+            disabled
+          />
+          
+          <MenuDivider />
+          
+          <MenuItem
+            icon="code"
+            text="测试编辑器"
+            onClick={testEditor}
+          />
+        </>
       )}
     </Menu>
   );
 
-  if (psdTextElements.length === 0 && !selectedTextElement) {
-    return null; // 没有PSD文字时不显示按钮
-  }
+  // 总是显示按钮，至少可以测试编辑器
+  // if (psdTextElements.length === 0 && !selectedTextElement) {
+  //   return null; 
+  // }
 
   return (
     <Popover

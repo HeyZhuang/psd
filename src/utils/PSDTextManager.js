@@ -24,36 +24,52 @@ class PSDTextManager {
 
   // 设置双击事件监听器
   setupDoubleClickHandler() {
-    let lastClickTime = 0;
-    let lastClickedElement = null;
+    // 等待Polotno画布加载完成
+    const waitForCanvas = () => {
+      const canvas = document.querySelector('canvas');
+      if (canvas) {
+        this.setupCanvasDoubleClick(canvas);
+      } else {
+        setTimeout(waitForCanvas, 100);
+      }
+    };
+    
+    // 延迟等待画布创建
+    setTimeout(waitForCanvas, 1000);
+  }
 
-    // 监听画布点击事件
-    const checkDoubleClick = (event) => {
-      const currentTime = Date.now();
-      const timeDiff = currentTime - lastClickTime;
+  // 设置画布双击事件
+  setupCanvasDoubleClick(canvas) {
+    let clickCount = 0;
+    let clickTimer = null;
+
+    const handleCanvasClick = (event) => {
+      clickCount++;
       
-      if (timeDiff < 500) { // 500ms内的连续点击算作双击
-        const selectedElement = this.store.selectedElements[0];
+      if (clickCount === 1) {
+        clickTimer = setTimeout(() => {
+          clickCount = 0;
+        }, 300);
+      } else if (clickCount === 2) {
+        clearTimeout(clickTimer);
+        clickCount = 0;
         
-        if (selectedElement && 
-            selectedElement.type === 'text' && 
-            selectedElement === lastClickedElement) {
+        // 双击事件处理
+        const selectedElement = this.store.selectedElements[0];
+        if (selectedElement && selectedElement.type === 'text' && this.isPSDTextElement(selectedElement)) {
           this.openTextEditor(selectedElement);
         }
       }
-      
-      lastClickTime = currentTime;
-      lastClickedElement = this.store.selectedElements[0];
     };
 
-    // 添加全局点击监听器
-    document.addEventListener('click', checkDoubleClick);
+    canvas.addEventListener('click', handleCanvasClick);
+    console.log('画布双击监听器已设置');
     
     // 添加快捷键支持 (Enter键)
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey) {
         const selectedElement = this.store.selectedElements[0];
-        if (selectedElement && selectedElement.type === 'text') {
+        if (selectedElement && selectedElement.type === 'text' && this.isPSDTextElement(selectedElement)) {
           event.preventDefault();
           this.openTextEditor(selectedElement);
         }
@@ -68,20 +84,17 @@ class PSDTextManager {
     // 监听元素选择变化
     const checkSelectedElement = () => {
       const selectedElement = this.store.selectedElements[0];
-      if (selectedElement && selectedElement.type === 'text') {
+      if (selectedElement && selectedElement.type === 'text' && this.isPSDTextElement(selectedElement)) {
         this.addTextEditHint(selectedElement);
       } else {
         this.removeTextEditHint();
       }
     };
 
-    // 使用MobX的autorun来响应选择变化
-    if (window.mobx && window.mobx.autorun) {
-      window.mobx.autorun(checkSelectedElement);
-    } else {
-      // 降级到定时检查
-      setInterval(checkSelectedElement, 100);
-    }
+    // 使用定时检查方式监听选择变化（更稳定）
+    setInterval(checkSelectedElement, 200);
+    
+    console.log('元素观察器已设置');
   }
 
   // 显示文字编辑提示
@@ -140,45 +153,58 @@ class PSDTextManager {
 
   // 打开文字编辑器
   openTextEditor(element) {
+    console.log('尝试打开文字编辑器:', {
+      element: element,
+      text: element.text,
+      isPSD: this.isPSDTextElement(element),
+      custom: element.custom
+    });
+
     if (this.activeEditor) {
+      console.log('关闭现有编辑器');
       this.closeTextEditor();
     }
 
-    // 创建编辑器容器
-    const editorContainer = document.createElement('div');
-    editorContainer.id = 'psd-text-editor-container';
-    
-    // 添加遮罩层
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 19999;
-    `;
-    
-    overlay.onclick = () => this.closeTextEditor();
-    
-    document.body.appendChild(overlay);
-    document.body.appendChild(editorContainer);
-    
-    // 创建React根节点并渲染编辑器
-    this.editorRoot = ReactDOM.createRoot(editorContainer);
-    this.editorRoot.render(
-      React.createElement(PSDTextEditor, {
-        element: element,
-        store: this.store,
-        onClose: () => this.closeTextEditor()
-      })
-    );
-    
-    this.activeEditor = editorContainer;
-    this.removeTextEditHint(); // 移除提示
-    
-    console.log('文字编辑器已打开:', element.text);
+    try {
+      // 创建编辑器容器
+      const editorContainer = document.createElement('div');
+      editorContainer.id = 'psd-text-editor-container';
+      
+      // 添加遮罩层
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 19999;
+      `;
+      
+      overlay.onclick = () => this.closeTextEditor();
+      
+      document.body.appendChild(overlay);
+      document.body.appendChild(editorContainer);
+      
+      // 创建React根节点并渲染编辑器
+      this.editorRoot = ReactDOM.createRoot(editorContainer);
+      this.editorRoot.render(
+        React.createElement(PSDTextEditor, {
+          element: element,
+          store: this.store,
+          onClose: () => this.closeTextEditor()
+        })
+      );
+      
+      this.activeEditor = editorContainer;
+      this.removeTextEditHint(); // 移除提示
+      
+      console.log('✅ 文字编辑器已打开:', element.text);
+    } catch (error) {
+      console.error('❌ 打开文字编辑器失败:', error);
+      alert('打开文字编辑器失败: ' + error.message);
+    }
   }
 
   // 关闭文字编辑器
