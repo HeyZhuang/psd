@@ -1,0 +1,611 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+
+body {
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+/* 顶部栏按钮样式 */
+.bp5-dark .topbar .bp5-button, .bp5-dark .bp5-button.bp5-intent-primary  {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    padding: 9px 20px;
+    border-radius: 6px;
+}
+
+/* 普通按钮白底黑字 */
+.bp5-button {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #d5d5d5 !important;
+}
+
+.bp5-button:hover {
+    background-color: #f8f8f8 !important;
+    color: #333333 !important;
+}
+
+/* 主按钮蓝底白字 */
+.bp5-dark .bp5-button.bp5-intent-primary {
+    background: linear-gradient(135deg, #1764EA 0%, #1451c4 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.bp5-dark .bp5-button.bp5-intent-primary:hover {
+    background: linear-gradient(135deg, #1870ff 0%, #1764EA 100%) !important;
+} 
+
+
+body .bp5-input[type=search] {
+    border-radius: 1px;
+    border: 1px solid #393939;
+    box-shadow: none;
+    background-color: #262626;
+    height: 36px;
+}
+
+body .bp5-input-group .bp5-icon-search {
+    margin: 10px;
+}
+
+/* 顶部导航栏 - 白底黑字 */
+.bp5-navbar.bp5-dark, .bp5-dark .bp5-navbar {
+    background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%) !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 顶部导航栏内所有文字 */
+.bp5-navbar.bp5-dark *,
+.bp5-dark .bp5-navbar * {
+    color: #333333 !important;
+}
+
+/* 顶部导航栏按钮 */
+.bp5-navbar.bp5-dark .bp5-button,
+.bp5-dark .bp5-navbar .bp5-button {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #d5d5d5 !important;
+}
+
+/* 顶部导航栏按钮悬停 - 保持黑字 */
+.bp5-navbar.bp5-dark .bp5-button:hover,
+.bp5-dark .bp5-navbar .bp5-button:hover {
+    background-color: #f8f8f8 !important;
+    color: #333333 !important;
+}
+
+/* 顶部导航栏主按钮 */
+.bp5-navbar.bp5-dark .bp5-button.bp5-intent-primary,
+.bp5-dark .bp5-navbar .bp5-button.bp5-intent-primary {
+    background: linear-gradient(135deg, #1764EA 0%, #1451c4 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.bp5-navbar.bp5-dark .bp5-button.bp5-intent-primary:hover,
+.bp5-dark .bp5-navbar .bp5-button.bp5-intent-primary:hover {
+    background: linear-gradient(135deg, #1870ff 0%, #1764EA 100%) !important;
+    color: #ffffff !important;
+}
+
+/* 弹出菜单 - 白底黑字 */
+.bp5-popover.bp5-dark .bp5-popover-content, .bp5-dark .bp5-popover .bp5-popover-content {
+    background-color: #ffffff !important;
+    border-radius: 8px;
+    color: #333333 !important;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+body .bp5-dark .bp5-menu {
+    background-color: #ffffff !important;
+    border-radius: 8px;
+    color: #333333 !important;
+    padding: 8px;
+}
+
+/* 菜单项 */
+body .bp5-dark .bp5-menu-item {
+    color: #333333 !important;
+    border-radius: 6px;
+}
+
+body .bp5-dark .bp5-menu-item:hover {
+    background-color: #f5f5f5 !important;
+    color: #333333 !important;
+}
+
+body .bp5-dark .bp5-menu-item.bp5-active {
+    background-color: #e8e8e8 !important;
+}
+
+/* 下拉选择框 - 白底黑字 */
+body .bp5-dark .bp5-html-select select, body .bp5-dark .bp5-select select {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #d5d5d5 !important;
+    border-radius: 6px;
+    height: 36px;
+    font-size: 14px;
+    box-shadow: none;
+}
+
+body .bp5-dark .bp5-html-select .bp5-icon {
+    margin: 4px
+}
+
+.bp5-dark .polotno-app-container .polotno-side-panel .fill  {
+    fill: #161616;
+}
+
+.bp5-popover.bp5-dark .bp5-popover-arrow-fill, .bp5-dark .bp5-popover .bp5-popover-arrow-fill {
+    fill: #393939;
+}
+
+/* 优化侧边栏容器 - 白色底色 */
+.polotno-side-tabs-container {
+    border-right: 1px solid #e5e5e5;
+    min-width: 72px;
+    background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+@media screen and (min-width: 501px) {
+    .polotno-app-container .polotno-side-tabs-container {
+        min-width: 72px;
+    }
+}
+
+/* 优化侧边栏标签项 - 白底黑字风格 */
+.polotno-app-container .polotno-side-panel-tab {
+    height: 68px;
+    padding-top: 14px;
+    margin: 4px 6px;
+    border-radius: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    color: #333333 !important;
+}
+
+/* 侧边栏图标优化 - 黑色 */
+.polotno-app-container .polotno-side-panel-tab svg {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: none;
+    color: #333333 !important;
+}
+
+.polotno-app-container .polotno-side-panel-tab svg path {
+    fill: #333333 !important;
+}
+
+/* 悬停效果 - 浅灰色背景，保持黑色图标 */
+.polotno-app-container .polotno-side-panel-tab:hover {
+    background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+    transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.polotno-app-container .polotno-side-panel-tab:hover svg {
+    transform: scale(1.08);
+    color: #333333 !important;
+}
+
+.polotno-app-container .polotno-side-panel-tab:hover svg path {
+    fill: #333333 !important;
+}
+
+/* 激活状态 - 深灰背景，蓝色边框 */
+.polotno-app-container .polotno-side-panel-tab.active {
+    background: linear-gradient(135deg, #e8e8e8 0%, #dddddd 100%);
+    border-left: 3px solid #1764EA;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    color: #000000 !important;
+}
+
+/* 激活状态下图标 */
+.polotno-app-container .polotno-side-panel-tab.active svg {
+    transform: scale(1.1);
+    color: #1764EA !important;
+}
+
+.polotno-app-container .polotno-side-panel-tab.active svg path {
+    fill: #1764EA !important;
+}
+
+/* 标签文字优化 - 黑色 */
+.polotno-app-container .polotno-side-panel-tab span {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-top: 6px;
+    color: #333333 !important;
+    transition: all 0.25s ease;
+}
+
+.polotno-app-container .polotno-side-panel-tab:hover span {
+    color: #333333 !important;
+    font-weight: 600;
+}
+
+.polotno-app-container .polotno-side-panel-tab.active span {
+    color: #1764EA !important;
+    font-weight: 600;
+}
+
+/* 面板容器优化 - 白底黑字 */
+.polotno-panel-container {
+    border-right: 1px solid #e5e5e5;
+    background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+    color: #333333 !important;
+}
+
+/* 通用标签悬停和激活效果 - 黑字 */
+.bp5-dark .polotno-app-container .go3977838046:hover,
+.bp5-dark .polotno-app-container .go3977838046.active {
+    background: linear-gradient(90deg, rgba(23, 100, 234, 0.08) 0%, transparent 100%);
+    color: #333333 !important;
+    border-left: 2px solid #1764EA;
+    border-top: none;
+    border-bottom: none;
+    transition: all 0.2s ease;
+}
+
+/* 添加焦点状态 */
+.polotno-app-container .polotno-side-panel-tab:focus {
+    outline: 2px solid rgba(23, 100, 234, 0.5);
+    outline-offset: 2px;
+}
+
+.bp5-popover.bp5-dark, .bp5-dark .bp5-popover {
+    box-shadow: none;
+}
+
+.bp5-popover.bp5-dark .bp5-popover-arrow::before, .bp5-dark .bp5-popover .bp5-popover-arrow::before {
+    display: none;
+}
+
+/* 弹出菜单箭头 */
+.bp5-popover-arrow-fill {
+    background-color: #ffffff !important;
+}
+
+.bp5-popover.bp5-dark .bp5-popover-arrow-fill, .bp5-dark .bp5-popover .bp5-popover-arrow-fill {
+    fill: #ffffff !important;
+}
+
+/* 菜单项图标 - 黑色 */
+.bp5-dark .bp5-menu-item::before,
+.bp5-dark .bp5-menu-item .bp5-menu-item-icon,
+.bp5-dark .bp5-menu-item .bp5-menu-item-selected-icon,
+.bp5-dark .bp5-menu-item .bp5-submenu-icon {
+    color: #333333 !important;
+}
+
+.bp5-dark .bp5-menu-item svg path {
+    fill: #333333 !important;
+}
+
+/* ========== 侧边栏额外优化 ========== */
+
+/* 优化滚动条样式 - 浅色主题 */
+.polotno-panel-container::-webkit-scrollbar,
+.polotno-side-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.polotno-panel-container::-webkit-scrollbar-track,
+.polotno-side-panel::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.polotno-panel-container::-webkit-scrollbar-thumb,
+.polotno-side-panel::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #cccccc 0%, #aaaaaa 100%);
+    border-radius: 4px;
+    border: 2px solid #f5f5f5;
+    transition: background 0.2s ease;
+}
+
+.polotno-panel-container::-webkit-scrollbar-thumb:hover,
+.polotno-side-panel::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #1764EA 0%, #1451c4 100%);
+}
+
+/* 面板标题优化 - 黑色 */
+.polotno-panel-container h3,
+.polotno-panel-container .bp5-heading {
+    font-weight: 600;
+    color: #333333 !important;
+    letter-spacing: 0.01em;
+    margin-bottom: 12px;
+}
+
+/* 搜索框增强 - 白底黑字 */
+body .polotno-panel-container .bp5-input[type=search] {
+    border-radius: 8px;
+    border: 1px solid #d5d5d5;
+    background: #ffffff;
+    color: #333333 !important;
+    transition: all 0.2s ease;
+}
+
+body .polotno-panel-container .bp5-input[type=search]:focus {
+    border-color: #1764EA;
+    box-shadow: 0 0 0 3px rgba(23, 100, 234, 0.15);
+    background: #ffffff;
+}
+
+body .polotno-panel-container .bp5-input[type=search]::placeholder {
+    color: #999999;
+}
+
+/* 网格项优化 */
+.polotno-panel-container .polotno-images-grid-item {
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.polotno-panel-container .polotno-images-grid-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(23, 100, 234, 0.25);
+}
+
+/* 按钮增强 - 白底黑字 */
+.polotno-panel-container .bp5-button {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    color: #333333 !important;
+    border: 1px solid #d5d5d5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.polotno-panel-container .bp5-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #f8f8f8;
+    color: #333333 !important;
+}
+
+.polotno-panel-container .bp5-button.bp5-intent-primary {
+    background: linear-gradient(135deg, #1764EA 0%, #1451c4 100%);
+    color: #ffffff !important;
+    border: none;
+}
+
+.polotno-panel-container .bp5-button.bp5-intent-primary:hover {
+    background: linear-gradient(135deg, #1870ff 0%, #1764EA 100%);
+    color: #ffffff !important;
+}
+
+/* 按钮文字确保黑色 */
+.polotno-panel-container .bp5-button:not(.bp5-intent-primary) span {
+    color: #333333 !important;
+}
+
+.polotno-panel-container .bp5-button:not(.bp5-intent-primary):hover span {
+    color: #333333 !important;
+}
+
+/* 标签页切换动画 */
+.polotno-panel-container {
+    animation: fadeInPanel 0.3s ease;
+}
+
+@keyframes fadeInPanel {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 侧边栏分隔线优化 - 浅灰色 */
+.polotno-side-tabs-container::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(0, 0, 0, 0.08) 20%,
+        rgba(0, 0, 0, 0.08) 80%,
+        transparent 100%
+    );
+    pointer-events: none;
+}
+
+/* 工具提示优化 */
+.bp5-tooltip.bp5-dark {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 10px;
+}
+
+/* ========== 右侧图层面板样式 ========== */
+
+/* 右侧面板滚动条 */
+.right-layers-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.right-layers-panel::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.right-layers-panel::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #cccccc 0%, #aaaaaa 100%);
+    border-radius: 4px;
+    border: 2px solid #f5f5f5;
+    transition: background 0.2s ease;
+}
+
+.right-layers-panel::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #1764EA 0%, #1451c4 100%);
+}
+
+/* 右侧图层面板内所有文字 */
+.right-layers-panel * {
+    color: #333333 !important;
+}
+
+/* 右侧图层面板按钮 */
+.right-layers-panel .bp5-button {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #d5d5d5 !important;
+}
+
+.right-layers-panel .bp5-button:hover {
+    background: #f8f8f8 !important;
+    color: #333333 !important;
+}
+
+.right-layers-panel .bp5-button.bp5-intent-primary {
+    background: linear-gradient(135deg, #1764EA 0%, #1451c4 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.right-layers-panel .bp5-button.bp5-intent-primary * {
+    color: #ffffff !important;
+}
+
+/* 右侧图层面板图标 */
+.right-layers-panel svg path {
+    fill: #333333 !important;
+}
+
+.right-layers-panel .bp5-button.bp5-intent-primary svg path {
+    fill: #ffffff !important;
+}
+
+/* 动画定义 */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ========== 全局白底黑字主题覆盖 ========== */
+
+/* 所有面板内的文字 */
+.polotno-panel-container * {
+    color: #333333 !important;
+}
+
+/* 保留蓝色主按钮的白色文字 */
+.polotno-panel-container .bp5-button.bp5-intent-primary * {
+    color: #ffffff !important;
+}
+
+/* 链接颜色 */
+.polotno-panel-container a {
+    color: #1764EA !important;
+}
+
+/* 下拉选择框 */
+.polotno-panel-container select,
+.polotno-panel-container .bp5-select select,
+.polotno-panel-container .bp5-html-select select {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #d5d5d5 !important;
+}
+
+/* 输入框通用样式 */
+.polotno-panel-container input,
+.polotno-panel-container textarea {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #d5d5d5 !important;
+}
+
+.polotno-panel-container input:focus,
+.polotno-panel-container textarea:focus {
+    border-color: #1764EA !important;
+}
+
+/* 菜单项 */
+.polotno-panel-container .bp5-menu-item {
+    color: #333333 !important;
+}
+
+.polotno-panel-container .bp5-menu-item:hover {
+    background: #f5f5f5 !important;
+    color: #333333 !important;
+}
+
+/* 图标颜色 */
+.polotno-panel-container svg path {
+    fill: #333333 !important;
+}
+
+.polotno-panel-container .bp5-button.bp5-intent-primary svg path {
+    fill: #ffffff !important;
+}
+
+/* 标签和文本 */
+.polotno-panel-container label,
+.polotno-panel-container p,
+.polotno-panel-container span:not(.bp5-button span) {
+    color: #333333 !important;
+}
+
+/* ========== 全局按钮图标颜色 ========== */
+
+/* 所有按钮内的SVG图标默认为黑色 */
+.bp5-button:not(.bp5-intent-primary) svg,
+.bp5-button:not(.bp5-intent-primary) svg path,
+.bp5-button:not(.bp5-intent-primary) svg circle,
+.bp5-button:not(.bp5-intent-primary) svg rect {
+    fill: #333333 !important;
+    stroke: #333333 !important;
+}
+
+/* 悬停时保持黑色 */
+.bp5-button:not(.bp5-intent-primary):hover svg,
+.bp5-button:not(.bp5-intent-primary):hover svg path,
+.bp5-button:not(.bp5-intent-primary):hover svg circle,
+.bp5-button:not(.bp5-intent-primary):hover svg rect {
+    fill: #333333 !important;
+    stroke: #333333 !important;
+}
+
+/* 主按钮的图标为白色 */
+.bp5-button.bp5-intent-primary svg,
+.bp5-button.bp5-intent-primary svg path,
+.bp5-button.bp5-intent-primary svg circle,
+.bp5-button.bp5-intent-primary svg rect {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* 按钮文字颜色 */
+.bp5-button:not(.bp5-intent-primary) .bp5-button-text {
+    color: #333333 !important;
+}
+
+.bp5-button:not(.bp5-intent-primary):hover .bp5-button-text {
+    color: #333333 !important;
+}
