@@ -873,16 +873,70 @@ export const layerToPolotnoElement = async (layer) => {
       // 应用图层效果到文字元素
       if (layerEffects.hasEffects) {
         console.log(`文字图层 "${layer.name}" 包含效果:`, layerEffects);
-        
-        // 创建CSS效果样式
-        const cssEffects = generateCSSEffects(layerEffects);
-        if (cssEffects) {
-          element.custom = {
-            ...element.custom,
-            cssEffects: cssEffects,
-            textEffects: layerEffects
-          };
+
+        // Polotno原生支持描边(stroke)和阴影(shadow)
+        // 应用描边效果
+        if (layerEffects.stroke && layerEffects.stroke.enabled) {
+          element.strokeWidth = layerEffects.stroke.size || 0;
+          element.stroke = layerEffects.stroke.color || '#000000';
+          console.log(`✓ 应用描边: ${element.strokeWidth}px ${element.stroke}`);
         }
+
+        // 应用阴影效果 (支持多种阴影类型)
+        const shadows = [];
+
+        // 外发光转换为阴影
+        if (layerEffects.outerGlow && layerEffects.outerGlow.enabled) {
+          const glow = layerEffects.outerGlow;
+          shadows.push({
+            offsetX: 0,
+            offsetY: 0,
+            blur: (glow.blur || 5) * 2, // 外发光需要更大的模糊
+            color: glow.color || '#ffffff',
+            opacity: (glow.opacity || 75) / 100
+          });
+          console.log(`✓ 应用外发光: blur=${glow.blur}px, color=${glow.color}`);
+        }
+
+        // 投影
+        if (layerEffects.dropShadow && layerEffects.dropShadow.enabled) {
+          const shadow = layerEffects.dropShadow;
+          const angle = (shadow.angle || 120) * Math.PI / 180;
+          const distance = shadow.distance || 5;
+          shadows.push({
+            offsetX: Math.round(Math.cos(angle) * distance),
+            offsetY: Math.round(Math.sin(angle) * distance),
+            blur: shadow.blur || 5,
+            color: shadow.color || '#000000',
+            opacity: (shadow.opacity || 75) / 100
+          });
+          console.log(`✓ 应用投影: distance=${distance}px, angle=${shadow.angle}°, blur=${shadow.blur}px`);
+        }
+
+        // 应用阴影到元素
+        if (shadows.length > 0) {
+          element.shadowEnabled = true;
+          // Polotno只支持单个阴影,使用第一个
+          element.shadowOffsetX = shadows[0].offsetX;
+          element.shadowOffsetY = shadows[0].offsetY;
+          element.shadowBlur = shadows[0].blur;
+          element.shadowColor = shadows[0].color;
+          element.shadowOpacity = shadows[0].opacity;
+        }
+
+        // 颜色叠加 - 直接覆盖fill颜色
+        if (layerEffects.colorOverlay && layerEffects.colorOverlay.enabled) {
+          const originalFill = element.fill;
+          element.fill = layerEffects.colorOverlay.color || '#000000';
+          element.opacity = (layerEffects.colorOverlay.opacity || 100) / 100;
+          console.log(`✓ 应用颜色叠加: ${originalFill} -> ${element.fill} (opacity: ${element.opacity})`);
+        }
+
+        // 保存原始效果数据用于调试
+        element.custom = {
+          ...element.custom,
+          layerEffects: layerEffects
+        };
       }
       
       const originalStyleData = {
@@ -892,17 +946,28 @@ export const layerToPolotnoElement = async (layer) => {
         fontName: textStyle?.fontName,
         fillColor: textStyle?.fillColor
       };
-      
+
       console.log('PSD文本样式原始数据:', originalStyleData);
       psdDebugger.logConversion('文本样式提取', layer.name, originalStyleData, null);
-      
+
       // 严格的字体大小：优先使用 Photoshop 提供的像素字号 (implied)，否则按 pt→px(96/72)
       const ptToPx = (pt) => (pt * 96) / 72;
       const styleRunData = (layer.text?.engineData?.StyleRun && layer.text.engineData.StyleRun[0]?.StyleSheet?.StyleSheetData) || {};
       const impliedPx = Number(textStyle?.impliedFontSize || textStyle?.ImpliedFontSize || styleRunData.ImpliedFontSize);
       const originalFontSizePt = Number(textStyle?.fontSize) || Number(textStyle?.Size) || Number(styleRunData.FontSize) || 16;
+
+      console.log(`[${layer.name}] 字体大小调试:`, {
+        'textStyle.fontSize': textStyle?.fontSize,
+        'textStyle.Size': textStyle?.Size,
+        'styleRunData.FontSize': styleRunData.FontSize,
+        'impliedPx': impliedPx,
+        'originalFontSizePt': originalFontSizePt
+      });
+
       const baseFontPx = impliedPx && impliedPx > 0 ? impliedPx : ptToPx(originalFontSizePt);
       element.fontSize = Math.max(1, Math.round(baseFontPx * 100) / 100);
+
+      console.log(`[${layer.name}] 计算结果: ${originalFontSizePt}pt -> ${baseFontPx}px -> ${element.fontSize}px`);
       element.custom = {
         ...element.custom,
         originalFontSizePt: originalFontSizePt,
@@ -925,45 +990,53 @@ export const layerToPolotnoElement = async (layer) => {
           originalFontName: originalFont
         };
       } else {
-        element.fontFamily = 'Arial, sans-serif';
+        element.fontFamily = 'Arial';
       }
       
       // 高精度颜色转换 - 为Polotno编辑器优化
       if (textStyle?.fillColor) {
         const color = textStyle.fillColor;
+        console.log(`原始文字颜色数据 [${layer.name}]:`, color);
+
         if (color.r !== undefined && color.g !== undefined && color.b !== undefined) {
-          // 确保颜色值在正确范围内
-          let r = Math.round(Math.max(0, Math.min(255, color.r)));
-          let g = Math.round(Math.max(0, Math.min(255, color.g)));
-          let b = Math.round(Math.max(0, Math.min(255, color.b)));
-          
-          // 如果颜色值在0-1范围，转换为0-255
+          let r, g, b;
+
+          // 如果颜色值在0-1范围（归一化值），转换为0-255
           if (color.r <= 1 && color.g <= 1 && color.b <= 1) {
             r = Math.round(color.r * 255);
             g = Math.round(color.g * 255);
             b = Math.round(color.b * 255);
+            console.log(`颜色转换(0-1→0-255): (${color.r}, ${color.g}, ${color.b}) -> (${r}, ${g}, ${b})`);
+          } else {
+            // 已经是0-255范围
+            r = Math.round(Math.max(0, Math.min(255, color.r)));
+            g = Math.round(Math.max(0, Math.min(255, color.g)));
+            b = Math.round(Math.max(0, Math.min(255, color.b)));
+            console.log(`颜色限制(0-255): (${color.r}, ${color.g}, ${color.b}) -> (${r}, ${g}, ${b})`);
           }
-          
+
           element.fill = `rgb(${r}, ${g}, ${b})`; // 使用RGB格式以获得更好的兼容性
-          
+
           // 保存精确颜色信息
           element.custom = {
             ...element.custom,
             preciseColor: { r, g, b },
             originalColorSource: 'psd'
           };
-          
-          console.log(`颜色转换: RGB(${color.r}, ${color.g}, ${color.b}) -> ${element.fill}`);
-          
+
+          console.log(`✓ 文字颜色设置 [${layer.name}]: ${element.fill}`);
+
           // 记录颜色转换详情
-          psdDebugger.logColorConversion(layer.name, 
-            { r: color.r, g: color.g, b: color.b }, 
+          psdDebugger.logColorConversion(layer.name,
+            { r: color.r, g: color.g, b: color.b },
             { r, g, b, css: element.fill }
           );
         } else {
+          console.warn(`文字颜色数据不完整 [${layer.name}], 使用默认黑色`);
           element.fill = 'rgb(0, 0, 0)';
         }
       } else {
+        console.warn(`未找到文字颜色 [${layer.name}], 使用默认黑色`);
         element.fill = 'rgb(0, 0, 0)';
       }
       
@@ -986,30 +1059,22 @@ export const layerToPolotnoElement = async (layer) => {
       if (textStyle?.strikethrough) decorations.push('line-through');
       element.textDecoration = decorations.length > 0 ? decorations.join(' ') : 'none';
       
-      // 应用水平/垂直缩放（Photoshop HorizontalScale/VerticalScale 或 Transform 矩阵）
+      // 应用水平/垂直缩放（Photoshop HorizontalScale/VerticalScale）
+      // 注意: Transform矩阵通常用于文本框的定位和旋转,不用于字体缩放
+      // 字体缩放应该只使用 horizontalScale 和 verticalScale 属性
       const hScalePct = Number(textStyle?.horizontalScale || textStyle?.HorizontalScale || styleRunData.HorizontalScale);
       const vScalePct = Number(textStyle?.verticalScale || textStyle?.VerticalScale || styleRunData.VerticalScale);
       let scaleX = isFinite(hScalePct) && hScalePct > 0 ? hScalePct / 100 : 1;
       let scaleY = isFinite(vScalePct) && vScalePct > 0 ? vScalePct / 100 : 1;
 
-      // 解析 Transform 矩阵以获取缩放
-      const transform = layer.text?.engineData?.Transform || layer.text?.transform || styleRunData.Transform;
-      if (Array.isArray(transform) && transform.length >= 4) {
-        // Photoshop 矩阵 [xx, xy, yx, yy, tx, ty]
-        const xx = Number(transform[0]);
-        const xy = Number(transform[1]);
-        const yx = Number(transform[2]);
-        const yy = Number(transform[3]);
-        const calcScaleX = Math.sqrt((xx || 0) * (xx || 0) + (xy || 0) * (xy || 0));
-        const calcScaleY = Math.sqrt((yx || 0) * (yx || 0) + (yy || 0) * (yy || 0));
-        if (calcScaleX > 0) scaleX *= calcScaleX;
-        if (calcScaleY > 0) scaleY *= calcScaleY;
-      }
+      console.log(`[${layer.name}] 文字缩放: scaleX=${scaleX} (${hScalePct}%), scaleY=${scaleY} (${vScalePct}%)`);
 
-      // 仅当没有 ImpliedFontSize（即从 pt→px 计算）时，才对字号施加缩放，避免二次缩放
-      if (scaleY !== 1 && element.custom.fontSizeSource === 'ptToPx') {
+      // 应用垂直缩放到字体大小
+      // 仅当缩放值合理且字体源为ptToPx时应用
+      if (scaleY !== 1 && scaleY > 0.5 && scaleY < 2 && element.custom.fontSizeSource === 'ptToPx') {
         const before = element.fontSize;
         element.fontSize = Math.max(1, Math.round((element.fontSize * scaleY) * 100) / 100);
+        console.log(`[${layer.name}] 应用垂直缩放: ${before}px * ${scaleY} = ${element.fontSize}px`);
         element.custom = { ...element.custom, appliedScaleY: scaleY, fontSizeBeforeScale: before };
       }
       // 仅在从 pt→px 计算的情况下，对字距应用水平缩放

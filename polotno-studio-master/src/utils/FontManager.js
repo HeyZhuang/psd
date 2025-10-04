@@ -124,36 +124,14 @@ export class FontManager {
 
   /**
    * 获取最佳字体回退方案
+   * 注意: Polotno 只接受单个字体名称，不接受逗号分隔的列表
    */
   getFontWithFallback(originalFont) {
-    if (!originalFont) return 'Arial, sans-serif';
+    if (!originalFont) return 'Arial';
 
-    const fallback = this.fallbackMap.get(originalFont);
-    if (fallback) {
-      return `"${originalFont}", ${fallback}`;
-    }
-
-    // 智能分析字体特征
-    const lowerFont = originalFont.toLowerCase();
-    
-    if (lowerFont.includes('mono') || lowerFont.includes('code') || lowerFont.includes('consol')) {
-      return `"${originalFont}", Consolas, Monaco, "Courier New", monospace`;
-    }
-    
-    if (lowerFont.includes('serif') && !lowerFont.includes('sans')) {
-      return `"${originalFont}", Times, "Times New Roman", Georgia, serif`;
-    }
-    
-    if (lowerFont.includes('script') || lowerFont.includes('hand') || lowerFont.includes('brush')) {
-      return `"${originalFont}", cursive`;
-    }
-    
-    if (lowerFont.includes('display') || lowerFont.includes('title') || lowerFont.includes('decorative')) {
-      return `"${originalFont}", fantasy`;
-    }
-    
-    // 默认无衬线字体
-    return `"${originalFont}", Arial, Helvetica, sans-serif`;
+    // 直接返回原字体名称，让浏览器自行处理fallback
+    // 如果字体不存在，浏览器会使用默认字体
+    return originalFont;
   }
 
   /**
