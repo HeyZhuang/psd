@@ -112,10 +112,8 @@ export const LayersPanel = observer(({ store }) => {
 
     // 添加监听器
     store.on('change', handleSelectionChange);
-    
-    return () => {
-      store.off('change', handleSelectionChange);
-    };
+
+    // Polotno store.on() doesn't require cleanup
   }, [store, elements]);
 
   return (
