@@ -924,11 +924,13 @@ export const layerToPolotnoElement = async (layer) => {
           element.shadowOpacity = shadows[0].opacity;
         }
 
-        // 颜色叠加 - 直接覆盖fill颜色
-        if (layerEffects.colorOverlay && layerEffects.colorOverlay.enabled) {
+        // 颜色叠加 - 只有当有明确的颜色值时才覆盖fill颜色
+        if (layerEffects.colorOverlay && layerEffects.colorOverlay.enabled && layerEffects.colorOverlay.color) {
           const originalFill = element.fill;
-          element.fill = layerEffects.colorOverlay.color || '#000000';
-          element.opacity = (layerEffects.colorOverlay.opacity || 100) / 100;
+          element.fill = layerEffects.colorOverlay.color;
+          if (layerEffects.colorOverlay.opacity < 100) {
+            element.opacity = layerEffects.colorOverlay.opacity / 100;
+          }
           console.log(`✓ 应用颜色叠加: ${originalFill} -> ${element.fill} (opacity: ${element.opacity})`);
         }
 

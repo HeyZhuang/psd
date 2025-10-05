@@ -14,7 +14,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { initializePrecisionRenderer } from './utils/PrecisionRenderer';
 import { psdDebugger } from './utils/PSDDebugger';
 import { initializePolotnoTextRenderer } from './utils/PolotnoTextRenderer';
-import { initializePSDTextManager } from './utils/PSDTextManager';
 
 // if (window.location.host !== 'studio.polotno.com') {
 //   console.log(
@@ -53,22 +52,17 @@ setTimeout(() => {
   // 2. 初始化Polotno文本渲染增强器
   const textRenderer = initializePolotnoTextRenderer(store);
   console.log('✅ Polotno文本渲染增强器已初始化');
-  
-  // 3. 初始化PSD文字编辑管理器
-  const psdTextManager = initializePSDTextManager(store);
-  console.log('✅ PSD文字编辑管理器已初始化');
-  
-  // 4. 调试器已在导入时自动初始化
+
+  // 3. 调试器已在导入时自动初始化
   psdDebugger.log('PSD调试系统已启动');
-  
+
   console.log('%c🎯 PSD超高精度导入系统已完全就绪', 'background: #4CAF50; color: white; padding: 8px; font-weight: bold;');
   console.log('%c📌 系统功能说明:', 'background: #2196F3; color: white; padding: 4px;');
   console.log('1. 🎨 自动应用精确样式到PSD导入元素');
   console.log('2. 🔧 深度集成Konva渲染引擎确保像素级精确');
-  console.log('3. 📝 支持PSD文字编辑 - 双击文字或按Enter键编辑');
-  console.log('4. 🔍 按 Ctrl+Shift+D 开启详细调试模式');
-  console.log('5. ⚡ 自动高精度字体大小、颜色、间距转换');
-  console.log('%c准备导入PSD文件体验极致精确度和文字编辑！', 'background: #FF9800; color: white; padding: 4px;');
+  console.log('3. 🔍 按 Ctrl+Shift+D 开启详细调试模式');
+  console.log('4. ⚡ 自动高精度字体大小、颜色、间距转换');
+  console.log('%c准备导入PSD文件体验极致精确度！', 'background: #FF9800; color: white; padding: 4px;');
 }, 1500);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

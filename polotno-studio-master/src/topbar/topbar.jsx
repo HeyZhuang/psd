@@ -27,7 +27,6 @@ import { UserMenu } from './user-menu';
 import { CloudWarning } from '../cloud-warning';
 import { PSDExportButton } from './psd-export-button';
 import { DebugButton } from './debug-button';
-import { PSDTextButton } from './psd-text-button';
 
 const NavbarContainer = styled('div')`
   white-space: nowrap;
@@ -129,7 +128,6 @@ export default observer(({ store }) => {
           ></AnchorButton> */}
           <NavbarDivider />
           <DebugButton store={store} />
-          <PSDTextButton store={store} />
           <PSDExportButton store={store} />
           <PostProcessButton store={store} />
           <DownloadButton store={store} />
