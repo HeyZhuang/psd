@@ -1630,3 +1630,35 @@ svg tspan {
         font-size: 12px !important;
     }
 }
+
+/* ========== 最高优先级样式覆盖 - 必须放在文件最后 ========== */
+/* 强制所有下拉选择框使用黑底白字 - 超高优先级 */
+html body .bp5-dark select,
+html body .bp5-dark .bp5-select select,
+html body .bp5-dark .bp5-html-select select,
+html body select,
+html body .bp5-select select,
+html body .bp5-html-select select,
+html body .polotno-toolbar select,
+html body .polotno-toolbar .bp5-select select,
+html body .bp5-navbar select,
+html body .bp5-navbar .bp5-select select {
+    background-color: #2b2b2b !important;
+    background: #2b2b2b !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border: 1px solid #555555 !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* 下拉选项也必须是黑底白字 */
+html body select option,
+html body .bp5-select select option,
+html body .bp5-html-select select option {
+    background-color: #2b2b2b !important;
+    background: #2b2b2b !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
