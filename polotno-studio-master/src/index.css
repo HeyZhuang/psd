@@ -146,15 +146,24 @@ div.polotno-workspace-container nav.bp5-navbar:not(.polotno-toolbar),
     transform: translateY(-1px) !important;
 }
 
-/* 工具栏文字和图标 */
+/* 工具栏文字和图标 - 统一黑色 */
 .polotno-toolbar *,
 .bp5-navbar.polotno-toolbar * {
-    color: #333333 !important;
+    color: #000000 !important;
 }
 
 .polotno-toolbar svg path,
 .bp5-navbar.polotno-toolbar svg path {
-    fill: #333333 !important;
+    fill: #000000 !important;
+}
+
+/* 工具栏文本标签 */
+.polotno-toolbar label,
+.polotno-toolbar span:not(.bp5-button span),
+.bp5-navbar.polotno-toolbar label,
+.bp5-navbar.polotno-toolbar span:not(.bp5-button span) {
+    color: #000000 !important;
+    font-weight: 500 !important;
 }
 
 /* 工具栏下拉选择框 */
@@ -163,11 +172,21 @@ div.polotno-workspace-container nav.bp5-navbar:not(.polotno-toolbar),
 .bp5-navbar.polotno-toolbar select,
 .bp5-navbar.polotno-toolbar .bp5-select select {
     background-color: #ffffff !important;
-    color: #333333 !important;
+    color: #000000 !important;
     border: 1px solid #d5d5d5 !important;
     border-radius: 6px !important;
     height: 32px !important;
     font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
+/* 下拉框选项也设置为黑色 */
+.polotno-toolbar select option,
+.polotno-toolbar .bp5-select select option,
+.bp5-navbar.polotno-toolbar select option,
+.bp5-navbar.polotno-toolbar .bp5-select select option {
+    color: #000000 !important;
+    background-color: #ffffff !important;
 }
 
 /* 工具栏紧凑布局 */
@@ -184,11 +203,18 @@ div.polotno-workspace-container nav.bp5-navbar:not(.polotno-toolbar),
 .polotno-toolbar input,
 .bp5-navbar.polotno-toolbar input {
     background-color: #ffffff !important;
-    color: #333333 !important;
+    color: #000000 !important;
     border: 1px solid #d5d5d5 !important;
     border-radius: 6px !important;
     height: 32px !important;
     font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
+/* 输入框占位符文字 */
+.polotno-toolbar input::placeholder,
+.bp5-navbar.polotno-toolbar input::placeholder {
+    color: #999999 !important;
 }
 
 .polotno-toolbar input:focus,
