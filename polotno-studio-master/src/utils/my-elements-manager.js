@@ -153,6 +153,11 @@ const drawPlaceholder = (ctx, size, type) => {
   ctx.fillText(type.toUpperCase(), size / 2, size / 2);
 };
 
+// 生成唯一ID
+const generateUniqueId = () => {
+  return `element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
 // 添加元素到画布
 export const addElementToCanvas = (elementData, store) => {
   try {
@@ -165,15 +170,12 @@ export const addElementToCanvas = (elementData, store) => {
     // 复制元素数据并确保元素是可编辑和可拖动的
     const elementConfig = {
       ...elementData.data,
-      // 移除可能导致不可编辑的属性
-      id: undefined, // 让 Polotno 生成新的 ID
+      // 生成新的唯一ID
+      id: generateUniqueId(),
       selectable: true,
       draggable: true,
-      editable: true,
       locked: false,
       removable: true,
-      // 确保文字元素可编辑
-      contentEditable: true,
     };
 
     // 从清理后的数据创建新元素
@@ -194,6 +196,7 @@ export const addElementToCanvas = (elementData, store) => {
     store.selectElements([newElement.id]);
 
     console.log('✅ 元素已添加到画布', {
+      id: newElement.id,
       type: newElement.type,
       draggable: newElement.draggable,
       selectable: newElement.selectable,
