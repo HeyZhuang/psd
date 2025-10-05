@@ -28,8 +28,10 @@ import { LayersSection } from './sections/layers-section';
 import { UploadSection } from './sections/upload-section';
 import { UserTemplatesSection } from './sections/user-templates-section';
 import { ResizeSection } from './sections/resize-section';
+import { MyElementsSection } from './sections/my-elements-section';
 
 import { useProject } from './project';
+import { saveElement } from './utils/my-elements-manager';
 
 import fr from './translations/fr';
 import en from './translations/en';
@@ -58,17 +60,19 @@ DEFAULT_SECTIONS.length = 0;
 // 按照指定顺序添加sections (排除Videos, Layers等):
 // 1. My Designs
 DEFAULT_SECTIONS.push(MyDesignsSection);
-// 2. Upload (上传)
+// 2. My Elements (我的元素)
+DEFAULT_SECTIONS.push(MyElementsSection);
+// 3. Upload (上传)
 DEFAULT_SECTIONS.push(UploadSection);
-// 3. Templates (模板)
+// 4. Templates (模板)
 DEFAULT_SECTIONS.push(UserTemplatesSection);
-// 4. Text (文字) - 使用Polotno SDK原生TextSection (包含我的字体功能)
+// 5. Text (文字) - 使用Polotno SDK原生TextSection (包含我的字体功能)
 DEFAULT_SECTIONS.push(TextSection);
-// 5. Photos (图片)
+// 6. Photos (图片)
 DEFAULT_SECTIONS.push(PhotosSection);
-// 6. Shapes (形状)
+// 7. Shapes (形状)
 DEFAULT_SECTIONS.push(ShapesSection);
-// 7. Resize (尺寸调整)
+// 8. Resize (尺寸调整)
 DEFAULT_SECTIONS.push(ResizeSection);
 
 // 注意：明确不添加 VideosSection，确保视频按钮不显示
@@ -165,7 +169,104 @@ const App = observer(({ store }) => {
         console.log(`✅ 字体已添加到面板: ${font.fontFamily}`);
       });
     }, 1000);
-  }, []);
+
+    // 添加右键菜单功能 - 保存元素到我的元素库
+    const handleContextMenu = (e) => {
+      const selectedElements = store.selectedElements;
+      if (selectedElements.length === 1) {
+        const element = selectedElements[0];
+
+        // 创建自定义右键菜单项
+        const existingMenu = document.querySelector('.custom-context-menu');
+        if (existingMenu) {
+          existingMenu.remove();
+        }
+
+        e.preventDefault();
+
+        const menu = document.createElement('div');
+        menu.className = 'custom-context-menu';
+        menu.style.cssText = `
+          position: fixed;
+          top: ${e.clientY}px;
+          left: ${e.clientX}px;
+          background: white;
+          border: 1px solid #e5e5e5;
+          border-radius: 6px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          padding: 4px 0;
+          z-index: 10000;
+          min-width: 180px;
+        `;
+
+        const saveButton = document.createElement('div');
+        saveButton.textContent = '⭐ 保存到我的元素';
+        saveButton.style.cssText = `
+          padding: 8px 16px;
+          cursor: pointer;
+          font-size: 14px;
+          color: #333;
+          transition: background 0.2s;
+        `;
+        saveButton.onmouseover = () => {
+          saveButton.style.backgroundColor = '#f5f5f5';
+        };
+        saveButton.onmouseout = () => {
+          saveButton.style.backgroundColor = 'transparent';
+        };
+        saveButton.onclick = async () => {
+          const success = await saveElement(element, store);
+          if (success) {
+            // 显示成功提示
+            const toast = document.createElement('div');
+            toast.textContent = '✅ 元素已保存到我的元素库';
+            toast.style.cssText = `
+              position: fixed;
+              top: 20px;
+              left: 50%;
+              transform: translateX(-50%);
+              background: #4CAF50;
+              color: white;
+              padding: 12px 24px;
+              border-radius: 6px;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+              z-index: 10001;
+              font-size: 14px;
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+          }
+          menu.remove();
+        };
+
+        menu.appendChild(saveButton);
+        document.body.appendChild(menu);
+
+        // 点击其他地方关闭菜单
+        const closeMenu = (e) => {
+          if (!menu.contains(e.target)) {
+            menu.remove();
+            document.removeEventListener('click', closeMenu);
+          }
+        };
+        setTimeout(() => {
+          document.addEventListener('click', closeMenu);
+        }, 0);
+      }
+    };
+
+    // 监听 workspace 的右键事件
+    const workspace = document.querySelector('.polotno-workspace-container');
+    if (workspace) {
+      workspace.addEventListener('contextmenu', handleContextMenu);
+    }
+
+    return () => {
+      if (workspace) {
+        workspace.removeEventListener('contextmenu', handleContextMenu);
+      }
+    };
+  }, [store]);
 
   const handleDrop = (ev) => {
     // Prevent default behavior (Prevent file from being opened)
