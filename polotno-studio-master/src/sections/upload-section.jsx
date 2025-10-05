@@ -25,7 +25,6 @@ import { CloudWarning } from '../cloud-warning';
 
 import { useProject } from '../project';
 import { listAssets, uploadAsset, deleteAsset } from '../api';
-import { createTestPSD } from '../create-test-psd';
 
 function getType(file) {
   const { type, name } = file;
@@ -599,7 +598,7 @@ export const UploadPanel = observer(({ store }) => {
           />
         </label>
         
-        {/* Test PSD Button - only show in development */}
+        {/* Test PSD Button - only show in development
         {process.env.NODE_ENV === 'development' && (
           <Button
             icon="document"
@@ -609,7 +608,7 @@ export const UploadPanel = observer(({ store }) => {
           >
             创建测试 PSD 文件
           </Button>
-        )}
+        )} */}
       </div>
       <CloudWarning />
       <ImagesGrid

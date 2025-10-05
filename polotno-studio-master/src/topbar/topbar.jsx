@@ -25,8 +25,6 @@ import { DownloadButton } from './download-button';
 import { PostProcessButton } from './post-process-button';
 import { UserMenu } from './user-menu';
 import { CloudWarning } from '../cloud-warning';
-import { PSDExportButton } from './psd-export-button';
-import { DebugButton } from './debug-button';
 
 const NavbarContainer = styled('div')`
   white-space: nowrap;
@@ -106,10 +104,10 @@ export default observer(({ store }) => {
         <Navbar.Group align={Alignment.RIGHT}>
           {/* <Status project={project} /> */}
 
+          {/*
           <AnchorButton href="https://polotno.com" target="_blank" minimal>
             For developers
           </AnchorButton>
-          {/* 
           <AnchorButton
             minimal
             href="https://github.com/lavrton/polotno-studio"
@@ -127,8 +125,6 @@ export default observer(({ store }) => {
             }
           ></AnchorButton> */}
           <NavbarDivider />
-          <DebugButton store={store} />
-          <PSDExportButton store={store} />
           <PostProcessButton store={store} />
           <DownloadButton store={store} />
           <UserMenu store={store} project={project} />

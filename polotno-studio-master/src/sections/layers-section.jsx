@@ -120,12 +120,16 @@ export const LayersPanel = observer(({ store }) => {
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '10px' }}>
       {/* 搜索框 */}
       <InputGroup
-        leftIcon="search"
-        placeholder="搜索图层..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ marginBottom: '10px' }}
-      />
+  leftIcon="search"
+  placeholder="搜索图层..."
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  style={{ 
+    marginBottom: '10px',
+    backgroundColor: 'white',
+    color: 'black'
+  }}
+/>
 
       {/* 图层列表 */}
       <div style={{ flex: 1, overflowY: 'auto' }}>

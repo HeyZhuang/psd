@@ -8,7 +8,6 @@ import { ZoomButtons } from 'polotno/toolbar/zoom-buttons';
 import {
   SidePanel,
   DEFAULT_SECTIONS,
-  TextSection,
   PhotosSection,
   VideosSection
 } from 'polotno/side-panel';
@@ -27,6 +26,9 @@ import { MyDesignsSection } from './sections/my-designs-section';
 import { LayersSection } from './sections/layers-section';
 import { UploadSection } from './sections/upload-section';
 import { UserTemplatesSection } from './sections/user-templates-section';
+import { ResizeSection } from './sections/resize-section';
+import { CustomTextSection } from './sections/text-section';
+import { FontsSection } from './sections/fonts-section';
 
 import { useProject } from './project';
 
@@ -55,12 +57,16 @@ DEFAULT_SECTIONS.push(MyDesignsSection);
 DEFAULT_SECTIONS.push(UploadSection);
 // 3. Templates (模板)
 DEFAULT_SECTIONS.push(UserTemplatesSection);
-// 4. Text (文字)
-DEFAULT_SECTIONS.push(TextSection);
-// 5. Photos (图片)
+// 4. Text (文字) - 使用自定义文字面板，移除预设按钮
+DEFAULT_SECTIONS.push(CustomTextSection);
+// 5. My Fonts (我的字体) - 字体上传和管理
+DEFAULT_SECTIONS.push(FontsSection);
+// 6. Photos (图片)
 DEFAULT_SECTIONS.push(PhotosSection);
-// 6. Shapes (形状)
+// 7. Shapes (形状)
 DEFAULT_SECTIONS.push(ShapesSection);
+// 8. Resize (尺寸调整)
+DEFAULT_SECTIONS.push(ResizeSection);
 
 // 注意：明确不添加 VideosSection，确保视频按钮不显示
 

@@ -288,32 +288,43 @@ body .bp5-dark .bp5-html-select .bp5-icon {
 }
 
 /* ========== 侧边栏额外优化 ========== */
-
-/* 优化滚动条样式 - 浅色主题 */
+/* 优化滚动条样式 - 白色底色 */
 .polotno-panel-container::-webkit-scrollbar,
-.polotno-side-panel::-webkit-scrollbar {
+.polotno-side-panel::-webkit-scrollbar,
+.polotno-side-tabs-container::-webkit-scrollbar {
     width: 8px;
+    background: #ffffff !important; /* 强制应用白色底色 */
 }
 
 .polotno-panel-container::-webkit-scrollbar-track,
-.polotno-side-panel::-webkit-scrollbar-track {
-    background: #f5f5f5;
+.polotno-side-panel::-webkit-scrollbar-track,
+.polotno-side-tabs-container::-webkit-scrollbar-track {
+    background: #ffffff !important;
     border-radius: 4px;
 }
 
 .polotno-panel-container::-webkit-scrollbar-thumb,
-.polotno-side-panel::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #cccccc 0%, #aaaaaa 100%);
+.polotno-side-panel::-webkit-scrollbar-thumb,
+.polotno-side-tabs-container::-webkit-scrollbar-thumb {
+    background: #d3d3d3 !important;
     border-radius: 4px;
-    border: 2px solid #f5f5f5;
+    border: 2px solid #ffffff !important;
     transition: background 0.2s ease;
 }
 
 .polotno-panel-container::-webkit-scrollbar-thumb:hover,
-.polotno-side-panel::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #1764EA 0%, #1451c4 100%);
+.polotno-side-panel::-webkit-scrollbar-thumb:hover,
+.polotno-side-tabs-container::-webkit-scrollbar-thumb:hover {
+    background: #b0b0b0 !important;
 }
 
+/* Firefox 兼容性 */
+.polotno-panel-container,
+.polotno-side-panel,
+.polotno-side-tabs-container {
+    scrollbar-width: thin;
+    scrollbar-color: #d3d3d3 #ffffff;
+}
 /* 面板标题优化 - 黑色 */
 .polotno-panel-container h3,
 .polotno-panel-container .bp5-heading {
@@ -444,19 +455,19 @@ body .polotno-panel-container .bp5-input[type=search]::placeholder {
 }
 
 .right-layers-panel::-webkit-scrollbar-track {
-    background: #f5f5f5;
+    background: #ffffff;
     border-radius: 4px;
 }
 
 .right-layers-panel::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #cccccc 0%, #aaaaaa 100%);
+    background: #d3d3d3;
     border-radius: 4px;
-    border: 2px solid #f5f5f5;
+    border: 2px solid #ffffff;
     transition: background 0.2s ease;
 }
 
 .right-layers-panel::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #1764EA 0%, #1451c4 100%);
+    background: #b0b0b0;
 }
 
 /* 右侧图层面板内所有文字 */
@@ -608,4 +619,361 @@ body .polotno-panel-container .bp5-input[type=search]::placeholder {
 
 .bp5-button:not(.bp5-intent-primary):hover .bp5-button-text {
     color: #333333 !important;
+}
+/* ========== 编辑区画布优化 - 自由画布风格（全屏布局版） ========== */
+
+/* WorkspaceWrap 容器 - 去除额外边距 */
+.polotno-workspace-wrap,
+div[class*="WorkspaceWrap"] {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* 工作区容器 - 棋盘格背景，填充整个可用空间 */
+.polotno-workspace-container {
+    background-image:
+        linear-gradient(45deg, #e9ecef 25%, transparent 25%),
+        linear-gradient(-45deg, #e9ecef 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e9ecef 75%),
+        linear-gradient(-45deg, transparent 75%, #e9ecef 75%) !important;
+    background-size: 20px 20px !important;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px !important;
+    background-color: #f8f9fa !important;
+    position: relative;
+    overflow: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* 画布主体 - 纯白色背景，覆盖棋盘格 */
+.polotno-canvas-container {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+    border-radius: 4px !important;
+    background: white !important;
+    position: relative;
+    z-index: 1;
+}
+
+/* 画布本身 - 纯白色，无棋盘格 */
+.polotno-canvas-container canvas {
+    background: white !important;
+}
+
+/* 画布周围空间 - 最小margin以最大化利用空间 */
+.polotno-workspace-container .konvajs-content {
+    margin: 10px auto !important;
+    padding: 0 !important;
+}
+
+/* 工具栏优化 - 浮动半透明风格 */
+.polotno-toolbar-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    z-index: 10;
+    padding: 8px 16px !important;
+}
+
+/* 缩放按钮优化 - 浮动在右下角 */
+.polotno-zoom-buttons-container {
+    position: fixed !important;
+    bottom: 80px !important;
+    right: 24px !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 12px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+    padding: 8px !important;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    z-index: 100;
+}
+
+.polotno-zoom-buttons-container button {
+    margin: 4px !important;
+    background: white !important;
+    border: 1px solid #e5e7eb !important;
+    color: #333333 !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.polotno-zoom-buttons-container button:hover {
+    background: #f3f4f6 !important;
+    border-color: #1764EA !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(23, 100, 234, 0.2) !important;
+}
+
+/* 页面时间轴优化 - 浮动半透明 */
+.polotno-pages-timeline {
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05) !important;
+    padding: 12px 16px !important;
+}
+
+/* 页面缩略图优化 */
+.polotno-pages-timeline .polotno-page-preview {
+    border-radius: 8px !important;
+    border: 2px solid #e5e7eb !important;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.polotno-pages-timeline .polotno-page-preview:hover {
+    border-color: #1764EA !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(23, 100, 234, 0.2) !important;
+}
+
+.polotno-pages-timeline .polotno-page-preview.active {
+    border-color: #1764EA !important;
+    box-shadow: 0 0 0 3px rgba(23, 100, 234, 0.15) !important;
+}
+
+/* 元素选择框优化 - 更明显的蓝色边框 */
+.konvajs-content .transformer-box {
+    stroke: #1764EA !important;
+    stroke-width: 2px !important;
+}
+
+/* 元素操作手柄优化 */
+.konvajs-content circle {
+    fill: #1764EA !important;
+    stroke: white !important;
+    stroke-width: 2px !important;
+}
+
+/* 网格线优化 - 更清晰 */
+.polotno-workspace-container .polotno-grid {
+    opacity: 0.15 !important;
+}
+
+/* 标尺优化 */
+.polotno-ruler {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    color: #666666 !important;
+}
+
+/* 画布拖拽时的光标 */
+.polotno-workspace-container.dragging {
+    cursor: grab !important;
+}
+
+.polotno-workspace-container.dragging:active {
+    cursor: grabbing !important;
+}
+
+/* 滚动条优化 - 编辑区域 */
+.polotno-workspace-container::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.polotno-workspace-container::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 6px;
+}
+
+.polotno-workspace-container::-webkit-scrollbar-thumb {
+    background: #d3d3d3;
+    border-radius: 6px;
+    border: 3px solid #ffffff;
+    transition: background 0.2s ease;
+}
+
+.polotno-workspace-container::-webkit-scrollbar-thumb:hover {
+    background: #b0b0b0;
+}
+
+/* 画布居中对齐指示线 */
+.polotno-snap-line {
+    stroke: #1764EA !important;
+    stroke-width: 1px !important;
+    stroke-dasharray: 4 4 !important;
+    opacity: 0.8 !important;
+}
+
+/* 元素悬停状态 */
+.konvajs-content:hover {
+    cursor: move;
+}
+
+/* 工作区包装器 - 充分利用空间 */
+.polotno-workspace-wrapper {
+    min-height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px !important; /* 最小padding以最大化利用空间 */
+    margin: 0 !important;
+}
+
+/* 工具提示优化 - 编辑区专用 */
+.polotno-workspace-container .bp5-tooltip {
+    background: rgba(30, 30, 30, 0.95) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ========== 额外的全屏布局优化 ========== */
+
+/* 确保 Workspace 组件填充整个容器 */
+.polotno-workspace-container > div {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* 移除可能存在的额外间距 */
+.polotno-workspace-container * {
+    box-sizing: border-box;
+}
+
+/* Konva stage 容器优化 */
+.konvajs-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 响应式优化 - 确保在不同屏幕尺寸下都能正常显示 */
+@media (max-width: 1280px) {
+    .polotno-workspace-container .konvajs-content {
+        margin: 8px auto !important;
+    }
+
+    .polotno-workspace-wrapper {
+        padding: 4px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .polotno-workspace-container .konvajs-content {
+        margin: 5px auto !important;
+    }
+
+    .polotno-workspace-wrapper {
+        padding: 3px !important;
+    }
+}
+/* ========== 返回按钮样式优化 ========== */
+
+/* 所有返回/后退按钮 - 包括左侧导航栏 */
+.bp5-button[class*="back"],
+.bp5-button[class*="Back"],
+.bp5-button[aria-label*="back"],
+.bp5-button[aria-label*="Back"],
+button[class*="back-button"],
+button[class*="backButton"],
+.polotno-panel-container .bp5-button[class*="back"],
+.polotno-side-panel .bp5-button[class*="back"],
+.polotno-side-tabs-container .bp5-button[class*="back"] {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #d3d3d3 !important;
+    transition: all 0.2s ease !important;
+}
+
+/* 返回按钮悬停效果 */
+.bp5-button[class*="back"]:hover,
+.bp5-button[class*="Back"]:hover,
+.bp5-button[aria-label*="back"]:hover,
+.bp5-button[aria-label*="Back"]:hover,
+button[class*="back-button"]:hover,
+button[class*="backButton"]:hover,
+.polotno-panel-container .bp5-button[class*="back"]:hover,
+.polotno-side-panel .bp5-button[class*="back"]:hover,
+.polotno-side-tabs-container .bp5-button[class*="back"]:hover {
+    background-color: #f0f0f0 !important;
+    color: #000000 !important;
+    border-color: #b0b0b0 !important;
+}
+
+/* 返回按钮图标 */
+.bp5-button[class*="back"] svg,
+.bp5-button[class*="Back"] svg,
+.bp5-button[aria-label*="back"] svg,
+.bp5-button[aria-label*="Back"] svg,
+button[class*="back-button"] svg,
+button[class*="backButton"] svg,
+.polotno-panel-container .bp5-button[class*="back"] svg,
+.polotno-side-panel .bp5-button[class*="back"] svg,
+.polotno-side-tabs-container .bp5-button[class*="back"] svg {
+    fill: #000000 !important;
+    stroke: #000000 !important;
+}
+
+/* 返回按钮图标路径 */
+.bp5-button[class*="back"] svg path,
+.bp5-button[class*="Back"] svg path,
+.bp5-button[aria-label*="back"] svg path,
+.bp5-button[aria-label*="Back"] svg path,
+button[class*="back-button"] svg path,
+button[class*="backButton"] svg path,
+.polotno-panel-container .bp5-button[class*="back"] svg path,
+.polotno-side-panel .bp5-button[class*="back"] svg path,
+.polotno-side-tabs-container .bp5-button[class*="back"] svg path {
+    fill: #000000 !important;
+    stroke: #000000 !important;
+}
+
+/* 左侧面板中的所有按钮默认白底 */
+.polotno-panel-container .bp5-button:not(.bp5-intent-primary),
+.polotno-side-panel .bp5-button:not(.bp5-intent-primary),
+.bp5-dark .polotno-panel-container .bp5-button:not(.bp5-intent-primary),
+.bp5-dark .polotno-side-panel .bp5-button:not(.bp5-intent-primary) {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+    border: 1px solid #d3d3d3 !important;
+}
+
+.polotno-panel-container .bp5-button:not(.bp5-intent-primary):hover,
+.polotno-side-panel .bp5-button:not(.bp5-intent-primary):hover,
+.bp5-dark .polotno-panel-container .bp5-button:not(.bp5-intent-primary):hover,
+.bp5-dark .polotno-side-panel .bp5-button:not(.bp5-intent-primary):hover {
+    background-color: #f0f0f0 !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
+
+/* 强制覆盖所有按钮的黑色背景 */
+.bp5-dark .polotno-panel-container button,
+.bp5-dark .polotno-side-panel button,
+.bp5-dark .polotno-panel-container .bp5-button,
+.bp5-dark .polotno-side-panel .bp5-button {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
+
+.bp5-dark .polotno-panel-container .bp5-button.bp5-intent-primary,
+.bp5-dark .polotno-side-panel .bp5-button.bp5-intent-primary {
+    background: linear-gradient(135deg, #1764EA 0%, #1451c4 100%) !important;
+    color: #ffffff !important;
+}
+
+/* 按钮内的图标和文字 */
+.bp5-dark .polotno-panel-container .bp5-button:not(.bp5-intent-primary) svg,
+.bp5-dark .polotno-side-panel .bp5-button:not(.bp5-intent-primary) svg,
+.bp5-dark .polotno-panel-container .bp5-button:not(.bp5-intent-primary) svg path,
+.bp5-dark .polotno-side-panel .bp5-button:not(.bp5-intent-primary) svg path {
+    fill: #000000 !important;
+    stroke: #000000 !important;
+}
+
+.bp5-dark .polotno-panel-container .bp5-button:not(.bp5-intent-primary) span,
+.bp5-dark .polotno-side-panel .bp5-button:not(.bp5-intent-primary) span {
+    color: #000000 !important;
 }

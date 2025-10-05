@@ -17,6 +17,7 @@ import * as unit from 'polotno/utils/unit';
 import { t } from 'polotno/utils/l10n';
 import { jsonToPPTX } from 'polotno/utils/to-pptx';
 import { getKey } from 'polotno/utils/validate-key';
+import { exportToPSD, exportAllPagesToPSDZip } from '../psd-export';
 
 const saveAsVideo = async ({ store, pixelRatio, fps, onProgress }) => {
   const json = store.toJSON();
@@ -165,6 +166,12 @@ export const DownloadButton = observer(({ store }) => {
       } else if (type === 'pptx') {
         await jsonToPPTX({ json: store.toJSON() });
         // downloadFile(pptx, 'polotno.pptx');
+      } else if (type === 'psd') {
+        if (store.pages.length > 1) {
+          await exportAllPagesToPSDZip(store, getName());
+        } else {
+          await exportToPSD(store, getName());
+        }
       } else if (type === 'mp4') {
         setProgressStatus('scheduled');
         await saveAsVideo({
@@ -253,6 +260,7 @@ export const DownloadButton = observer(({ store }) => {
             <option value="json">JSON</option>
             <option value="gif">GIF</option>
             <option value="mp4">MP4 Video (Beta)</option>
+            <option value="psd">PSD</option>
           </HTMLSelect>
 
           {type !== 'json' &&
