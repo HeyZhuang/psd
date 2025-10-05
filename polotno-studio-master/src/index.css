@@ -166,27 +166,52 @@ div.polotno-workspace-container nav.bp5-navbar:not(.polotno-toolbar),
     font-weight: 500 !important;
 }
 
-/* 工具栏下拉选择框 */
+/* 工具栏下拉选择框 - 强制黑色文字 - 最高优先级 */
 .polotno-toolbar select,
 .polotno-toolbar .bp5-select select,
+.polotno-toolbar .bp5-html-select select,
 .bp5-navbar.polotno-toolbar select,
-.bp5-navbar.polotno-toolbar .bp5-select select {
+.bp5-navbar.polotno-toolbar .bp5-select select,
+.bp5-navbar.polotno-toolbar .bp5-html-select select,
+body .bp5-dark .polotno-toolbar select,
+body .bp5-dark .polotno-toolbar .bp5-select select,
+body .bp5-dark .bp5-navbar.polotno-toolbar select,
+body .bp5-dark .bp5-navbar.polotno-toolbar .bp5-select select,
+.bp5-dark select,
+.bp5-dark .bp5-select select,
+.bp5-dark .bp5-html-select select {
     background-color: #ffffff !important;
     color: #000000 !important;
     border: 1px solid #d5d5d5 !important;
     border-radius: 6px !important;
     height: 32px !important;
     font-size: 13px !important;
-    font-weight: 500 !important;
+    font-weight: 700 !important;
+    -webkit-text-fill-color: #000000 !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* 确保所有select元素的文字都是黑色 - 全局覆盖 */
+select,
+.bp5-select select,
+.bp5-html-select select {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
 }
 
 /* 下拉框选项也设置为黑色 */
 .polotno-toolbar select option,
 .polotno-toolbar .bp5-select select option,
+.polotno-toolbar .bp5-html-select select option,
 .bp5-navbar.polotno-toolbar select option,
-.bp5-navbar.polotno-toolbar .bp5-select select option {
+.bp5-navbar.polotno-toolbar .bp5-select select option,
+.bp5-navbar.polotno-toolbar .bp5-html-select select option,
+body .bp5-dark .polotno-toolbar select option,
+body .bp5-dark .bp5-navbar.polotno-toolbar select option {
     color: #000000 !important;
     background-color: #ffffff !important;
+    -webkit-text-fill-color: #000000 !important;
 }
 
 /* 工具栏紧凑布局 */
@@ -368,14 +393,25 @@ body .bp5-dark .bp5-menu-item.bp5-active {
 }
 
 /* 下拉选择框 - 白底黑字 */
-body .bp5-dark .bp5-html-select select, body .bp5-dark .bp5-select select {
+body .bp5-dark .bp5-html-select select,
+body .bp5-dark .bp5-select select {
     background-color: #ffffff !important;
-    color: #333333 !important;
+    color: #000000 !important;
     border: 1px solid #d5d5d5 !important;
     border-radius: 6px;
     height: 36px;
     font-size: 14px;
+    font-weight: 600 !important;
     box-shadow: none;
+    -webkit-text-fill-color: #000000 !important;
+}
+
+/* 下拉选择框选项 */
+body .bp5-dark .bp5-html-select select option,
+body .bp5-dark .bp5-select select option {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    -webkit-text-fill-color: #000000 !important;
 }
 
 body .bp5-dark .bp5-html-select .bp5-icon {
