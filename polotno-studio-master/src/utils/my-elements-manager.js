@@ -167,19 +167,52 @@ export const addElementToCanvas = (elementData, store) => {
       return;
     }
 
-    // 复制元素数据并确保元素是可编辑和可拖动的
+    // 复制元素数据,移除可能导致不可拖动的属性
+    const {
+      id: oldId,
+      locked: oldLocked,
+      selectable: oldSelectable,
+      draggable: oldDraggable,
+      ...cleanData
+    } = elementData.data;
+
+    // 创建新的元素配置,强制设置可拖动属性
     const elementConfig = {
-      ...elementData.data,
+      ...cleanData,
       // 生成新的唯一ID
       id: generateUniqueId(),
+      // 强制设置可交互属性
       selectable: true,
       draggable: true,
       locked: false,
       removable: true,
     };
 
+    console.log('🔧 准备添加元素:', {
+      type: elementConfig.type,
+      draggable: elementConfig.draggable,
+      selectable: elementConfig.selectable,
+      locked: elementConfig.locked
+    });
+
     // 从清理后的数据创建新元素
     const newElement = page.addElement(elementConfig);
+
+    // 等待元素创建完成后,再次确保属性正确
+    setTimeout(() => {
+      newElement.set({
+        selectable: true,
+        draggable: true,
+        locked: false,
+        removable: true,
+      });
+      console.log('🔄 元素属性已更新:', {
+        id: newElement.id,
+        draggable: newElement.draggable,
+        selectable: newElement.selectable,
+        locked: newElement.locked
+      });
+    }, 100);
 
     // 将元素放置在画布中央
     const centerX = page.width / 2;
@@ -187,9 +220,6 @@ export const addElementToCanvas = (elementData, store) => {
     newElement.set({
       x: centerX - newElement.width / 2,
       y: centerY - newElement.height / 2,
-      selectable: true,
-      draggable: true,
-      locked: false,
     });
 
     // 选中新添加的元素
