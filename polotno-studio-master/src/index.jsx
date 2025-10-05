@@ -32,13 +32,33 @@ unstable_setAnimationsEnabled(true);
 // 开发环境配置
 const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-const store = createStore({ 
+const store = createStore({
   key: 'JtaT2TQRl_EqM_V0SXL0',
   // 在开发环境中禁用域名验证
   ...(isDevelopment && { disableDomainCheck: true })
 });
 window.store = store;
 store.addPage();
+
+// 预加载自定义字体 - 延迟执行以确保store完全初始化
+setTimeout(() => {
+  const customFonts = [
+    { fontFamily: '華康POP1體W5', url: '/fonts/華康POP1體W5.ttf' },
+    { fontFamily: '華康POP1體W9', url: '/fonts/華康POP1體W9.ttf' },
+    { fontFamily: '華康超特圓體', url: '/fonts/華康超特圓體.ttf' }
+  ];
+
+  customFonts.forEach(font => {
+    try {
+      store.addFont(font);
+      console.log(`✅ 已添加字体: ${font.fontFamily}`, font);
+    } catch (error) {
+      console.error(`❌ 添加字体失败: ${font.fontFamily}`, error);
+    }
+  });
+
+  console.log('当前store中的所有字体:', store.fonts);
+}, 500);
 
 const project = createProject({ store });
 window.project = project;

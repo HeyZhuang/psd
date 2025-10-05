@@ -273,219 +273,24 @@ export const UserTemplatesPanel = observer(({ store }) => {
     }
   };
 
-  // 应用模板 - 覆盖模式，不清空当前画布
+  // 应用模板 - 直接替换画布
   const applyTemplate = async (template) => {
     try {
       if (!template.json) {
         throw new Error('模板数据无效');
       }
-      
-      // 美观的自定义选择对话框
-      const choice = await showTemplateApplyDialog(template);
-      if (choice === null) return; // 用户取消
-      
-      if (choice === 'overlay') {
-        // 覆盖模式：将模板内容添加到当前画布
-        await applyTemplateAsOverlay(template);
-        showSuccessMessage(template, '✨ 模板已添加到画布');
-      } else if (choice === 'replace') {
-        // 替换模式：清空画布再加载模板
-        store.clear();
-        store.loadJSON(template.json);
-        showSuccessMessage(template, '🎨 画布已替换为模板');
-      }
-      
-      console.log('模板应用成功:', template.name, choice === 'overlay' ? '(覆盖模式)' : '(替换模式)');
-      
+
+      // 直接替换模式：清空画布再加载模板
+      store.clear();
+      store.loadJSON(template.json);
+      showSuccessMessage(template, '🎨 模板已应用');
+
+      console.log('模板应用成功:', template.name);
+
     } catch (error) {
       console.error('应用模板失败:', error);
       showErrorMessage('应用模板失败', error.message);
     }
-  };
-
-  // 美观的模板应用选择对话框
-  const showTemplateApplyDialog = (template) => {
-    return new Promise((resolve) => {
-      const modal = document.createElement('div');
-      modal.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-        background: rgba(0,0,0,0.6); z-index: 20000; display: flex; 
-        align-items: center; justify-content: center; backdrop-filter: blur(4px);
-        animation: fadeIn 0.2s ease-out;
-      `;
-      
-      const dialog = document.createElement('div');
-      dialog.style.cssText = `
-        background: white; 
-        color: #333; padding: 0; border-radius: 16px; 
-        max-width: 420px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        transform: scale(0.9); transition: transform 0.2s ease-out;
-        overflow: hidden; border: 1px solid #e1e8ed;
-      `;
-      
-      setTimeout(() => {
-        dialog.style.transform = 'scale(1)';
-      }, 10);
-      
-      dialog.innerHTML = `
-        <style>
-          @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-          .template-dialog-header {
-            background: #f8f9fa;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #e1e8ed;
-          }
-          .template-dialog-body {
-            padding: 24px;
-            background: white;
-          }
-          .template-dialog-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #333;
-          }
-          .template-dialog-subtitle {
-            font-size: 14px;
-            opacity: 0.7;
-            margin: 0;
-            font-weight: 400;
-            color: #666;
-          }
-          .template-dialog-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin: 20px 0;
-          }
-          .template-option-btn {
-            background: white;
-            border: 2px solid #e1e8ed;
-            color: #333;
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-align: left;
-          }
-          .template-option-btn:hover {
-            background: #f8f9fa;
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-          }
-          .template-option-icon {
-            font-size: 18px;
-            width: 24px;
-            text-align: center;
-          }
-          .template-option-content {
-            flex: 1;
-          }
-          .template-option-title {
-            font-weight: 600;
-            margin-bottom: 2px;
-          }
-          .template-option-desc {
-            font-size: 12px;
-            opacity: 0.8;
-          }
-          .template-dialog-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-          }
-          .template-cancel-btn {
-            flex: 1;
-            background: #f8f9fa;
-            border: 1px solid #e1e8ed;
-            color: #666;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-          .template-cancel-btn:hover {
-            background: #e9ecef;
-            border-color: #adb5bd;
-          }
-        </style>
-        
-        <div class="template-dialog-header">
-          <h3 class="template-dialog-title">
-            <span>🎨</span>
-            应用模板
-          </h3>
-          <p class="template-dialog-subtitle">${template.name}</p>
-        </div>
-        
-        <div class="template-dialog-body">
-          <div class="template-dialog-options">
-            <button class="template-option-btn" data-choice="overlay">
-              <span class="template-option-icon">✨</span>
-              <div class="template-option-content">
-                <div class="template-option-title">添加到画布</div>
-                <div class="template-option-desc">在现有内容基础上添加模板元素</div>
-              </div>
-            </button>
-            
-            <button class="template-option-btn" data-choice="replace">
-              <span class="template-option-icon">🔄</span>
-              <div class="template-option-content">
-                <div class="template-option-title">替换画布</div>
-                <div class="template-option-desc">清空画布并应用完整模板</div>
-              </div>
-            </button>
-          </div>
-          
-          <div class="template-dialog-actions">
-            <button class="template-cancel-btn" data-choice="cancel">
-              取消
-            </button>
-          </div>
-        </div>
-      `;
-      
-      modal.appendChild(dialog);
-      document.body.appendChild(modal);
-      
-      const cleanup = () => {
-        modal.style.opacity = '0';
-        dialog.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-          if (document.body.contains(modal)) {
-            document.body.removeChild(modal);
-          }
-        }, 200);
-      };
-      
-      // 绑定事件
-      dialog.addEventListener('click', (e) => {
-        const choice = e.target.closest('[data-choice]')?.dataset.choice;
-        if (choice) {
-          cleanup();
-          resolve(choice === 'cancel' ? null : choice);
-        }
-      });
-      
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          cleanup();
-          resolve(null);
-        }
-      });
-    });
   };
 
   // 美观的成功消息
@@ -549,50 +354,6 @@ export const UserTemplatesPanel = observer(({ store }) => {
         }
       }, 300);
     }, duration);
-  };
-
-  // 覆盖模式应用模板
-  const applyTemplateAsOverlay = async (template) => {
-    try {
-      const templateData = template.json;
-      
-      if (!templateData.pages || !templateData.pages[0] || !templateData.pages[0].children) {
-        throw new Error('模板数据格式无效');
-      }
-      
-      // 获取模板的元素
-      const templateElements = templateData.pages[0].children;
-      console.log(`准备添加 ${templateElements.length} 个模板元素到当前画布`);
-      
-      // 计算偏移量，避免完全重叠
-      const offsetX = 20;
-      const offsetY = 20;
-      
-      // 逐个添加模板元素到当前页面
-      for (const element of templateElements) {
-        try {
-          // 创建元素副本并添加偏移
-          const newElement = {
-            ...element,
-            id: undefined, // 让Polotno自动生成新ID
-            x: (element.x || 0) + offsetX,
-            y: (element.y || 0) + offsetY
-          };
-          
-          // 添加到当前页面
-          store.activePage.addElement(newElement);
-          console.log('成功添加元素:', element.type, newElement.x, newElement.y);
-        } catch (elementError) {
-          console.warn('添加元素失败:', element.type, elementError);
-        }
-      }
-      
-      console.log('模板覆盖应用完成');
-      
-    } catch (error) {
-      console.error('覆盖模式应用失败:', error);
-      throw error;
-    }
   };
 
   // 同步云端模板

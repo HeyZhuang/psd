@@ -9,7 +9,8 @@ import {
   SidePanel,
   DEFAULT_SECTIONS,
   PhotosSection,
-  VideosSection
+  VideosSection,
+  TextSection
 } from 'polotno/side-panel';
 import { Workspace } from 'polotno/canvas/workspace';
 import { PagesTimeline } from 'polotno/pages-timeline';
@@ -27,8 +28,6 @@ import { LayersSection } from './sections/layers-section';
 import { UploadSection } from './sections/upload-section';
 import { UserTemplatesSection } from './sections/user-templates-section';
 import { ResizeSection } from './sections/resize-section';
-import { CustomTextSection } from './sections/text-section';
-import { FontsSection } from './sections/fonts-section';
 
 import { useProject } from './project';
 
@@ -41,6 +40,12 @@ import zhCh from './translations/zh-ch';
 
 import Topbar from './topbar/topbar';
 import { RightLayersPanel } from './components/RightLayersPanel';
+
+// 优化的 Toolbar - 防止不必要的重渲染
+const MemoizedToolbar = React.memo(Toolbar);
+const MemoizedWorkspace = React.memo(Workspace);
+const MemoizedZoomButtons = React.memo(ZoomButtons);
+const MemoizedPagesTimeline = React.memo(PagesTimeline);
 
 // import '@blueprintjs/core/lib/css/blueprint.css';
 
@@ -57,15 +62,13 @@ DEFAULT_SECTIONS.push(MyDesignsSection);
 DEFAULT_SECTIONS.push(UploadSection);
 // 3. Templates (模板)
 DEFAULT_SECTIONS.push(UserTemplatesSection);
-// 4. Text (文字) - 使用自定义文字面板，移除预设按钮
-DEFAULT_SECTIONS.push(CustomTextSection);
-// 5. My Fonts (我的字体) - 字体上传和管理
-DEFAULT_SECTIONS.push(FontsSection);
-// 6. Photos (图片)
+// 4. Text (文字) - 使用Polotno SDK原生TextSection (包含我的字体功能)
+DEFAULT_SECTIONS.push(TextSection);
+// 5. Photos (图片)
 DEFAULT_SECTIONS.push(PhotosSection);
-// 7. Shapes (形状)
+// 6. Shapes (形状)
 DEFAULT_SECTIONS.push(ShapesSection);
-// 8. Resize (尺寸调整)
+// 7. Resize (尺寸调整)
 DEFAULT_SECTIONS.push(ResizeSection);
 
 // 注意：明确不添加 VideosSection，确保视频按钮不显示
@@ -118,6 +121,17 @@ const App = observer(({ store }) => {
   const height = useHeight();
   const [isLayersPanelOpen, setIsLayersPanelOpen] = React.useState(true);
 
+  // 使用 ref 避免不必要的重渲染
+  const workspaceWrapRef = React.useRef(null);
+
+  // 使用 useEffect 更新 margin，避免重渲染导致抖动
+  React.useEffect(() => {
+    if (workspaceWrapRef.current) {
+      const marginRight = isLayersPanelOpen ? '320px' : '50px';
+      workspaceWrapRef.current.style.marginRight = marginRight;
+    }
+  }, [isLayersPanelOpen]);
+
   React.useEffect(() => {
     if (project.language.startsWith('fr')) {
       setTranslations(fr, { validate: true });
@@ -136,6 +150,21 @@ const App = observer(({ store }) => {
 
   React.useEffect(() => {
     project.firstLoad();
+
+    // 预加载自定义字体
+    const customFonts = [
+      { fontFamily: '華康POP1體W5', url: '/fonts/華康POP1體W5.ttf' },
+      { fontFamily: '華康POP1體W9', url: '/fonts/華康POP1體W9.ttf' },
+      { fontFamily: '華康超特圓體', url: '/fonts/華康超特圓體.ttf' }
+    ];
+
+    // 延迟添加字体以确保UI已经渲染
+    setTimeout(() => {
+      customFonts.forEach(font => {
+        store.addFont(font);
+        console.log(`✅ 字体已添加到面板: ${font.fontFamily}`);
+      });
+    }, 1000);
   }, []);
 
   const handleDrop = (ev) => {
@@ -170,15 +199,12 @@ const App = observer(({ store }) => {
             <SidePanel store={store} sections={DEFAULT_SECTIONS} />
           </SidePanelWrap>
           <WorkspaceWrap
-            style={{
-              marginRight: isLayersPanelOpen ? '320px' : '50px',
-              transition: 'margin-right 0.3s ease',
-            }}
+            ref={workspaceWrapRef}
           >
-            <Toolbar store={store} />
-            <Workspace store={store} />
-            <ZoomButtons store={store} />
-            <PagesTimeline store={store} />
+            <MemoizedToolbar store={store} />
+            <MemoizedWorkspace store={store} />
+            <MemoizedZoomButtons store={store} />
+            <MemoizedPagesTimeline store={store} />
           </WorkspaceWrap>
         </PolotnoContainer>
         <RightLayersPanel
