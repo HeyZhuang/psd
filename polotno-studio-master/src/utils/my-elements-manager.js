@@ -162,8 +162,22 @@ export const addElementToCanvas = (elementData, store) => {
       return;
     }
 
-    // 从保存的数据创建新元素
-    const newElement = page.addElement(elementData.data);
+    // 复制元素数据并确保元素是可编辑和可拖动的
+    const elementConfig = {
+      ...elementData.data,
+      // 移除可能导致不可编辑的属性
+      id: undefined, // 让 Polotno 生成新的 ID
+      selectable: true,
+      draggable: true,
+      editable: true,
+      locked: false,
+      removable: true,
+      // 确保文字元素可编辑
+      contentEditable: true,
+    };
+
+    // 从清理后的数据创建新元素
+    const newElement = page.addElement(elementConfig);
 
     // 将元素放置在画布中央
     const centerX = page.width / 2;
@@ -171,12 +185,21 @@ export const addElementToCanvas = (elementData, store) => {
     newElement.set({
       x: centerX - newElement.width / 2,
       y: centerY - newElement.height / 2,
+      selectable: true,
+      draggable: true,
+      locked: false,
     });
 
     // 选中新添加的元素
     store.selectElements([newElement.id]);
 
-    console.log('✅ 元素已添加到画布');
+    console.log('✅ 元素已添加到画布', {
+      type: newElement.type,
+      draggable: newElement.draggable,
+      selectable: newElement.selectable,
+      locked: newElement.locked
+    });
+
     return newElement;
   } catch (error) {
     console.error('Error adding element to canvas:', error);
