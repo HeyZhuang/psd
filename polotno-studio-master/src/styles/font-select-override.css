@@ -1,0 +1,74 @@
+/* 字体选择器强制样式 - 最高优先级 */
+/* 使用超级强的选择器确保覆盖所有其他样式 */
+
+/* 工具栏中的所有 select 元素 - 白底黑字 */
+html body #root .polotno-app-container .polotno-toolbar select,
+html body #root .polotno-app-container nav.polotno-toolbar select,
+html body #root .bp5-dark .polotno-toolbar select,
+html body #root .polotno-toolbar select,
+html body #root nav.bp5-navbar select,
+html body #root div select,
+html body #root nav select,
+html body .polotno-toolbar select,
+html body .bp5-navbar select,
+html body nav select,
+html body div select,
+select {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    -moz-text-fill-color: #000000 !important;
+    text-shadow: none !important;
+    border: 2px solid #cccccc !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    padding: 8px 12px !important;
+    /* 强制使用系统字体，避免字体选择器显示每个字体自身的样式 */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+/* select 元素的 option - 白底黑字，强制覆盖字体自身样式 */
+html body #root select option,
+html body #root .polotno-toolbar select option,
+html body #root nav select option,
+html body .polotno-toolbar select option,
+html body .bp5-navbar select option,
+html body nav select option,
+html body div select option,
+select option,
+option {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    -moz-text-fill-color: #000000 !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    padding: 12px 16px !important;
+    /* 强制使用系统字体显示，避免使用字体自身样式 */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+/* option 悬停和选中状态 */
+html body #root select option:hover,
+html body #root select option:checked,
+html body #root select option:focus,
+html body select option:hover,
+html body select option:checked,
+html body select option:focus,
+select option:hover,
+select option:checked,
+select option:focus,
+option:hover,
+option:checked,
+option:focus {
+    background-color: #1764EA !important;
+    background: #1764EA !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    -moz-text-fill-color: #ffffff !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}

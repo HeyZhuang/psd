@@ -8,12 +8,15 @@ import { createProject, ProjectContext } from './project';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import './index.css';
 import './styles/psd-precision.css';
+import './styles/font-select-override.css';
+import './styles/force-black-option.css';
 import App from './App';
 import './logger';
 import { ErrorBoundary } from 'react-error-boundary';
 import { initializePrecisionRenderer } from './utils/PrecisionRenderer';
 import { psdDebugger } from './utils/PSDDebugger';
 import { initializePolotnoTextRenderer } from './utils/PolotnoTextRenderer';
+import { forceOptionBlack } from './utils/force-option-black';
 
 // if (window.location.host !== 'studio.polotno.com') {
 //   console.log(
@@ -37,28 +40,118 @@ const store = createStore({
   // 在开发环境中禁用域名验证
   ...(isDevelopment && { disableDomainCheck: true })
 });
+
+// 完全清空默认字体
+store.fonts.clear();
+console.log('🔥 已清空所有默认字体');
+
 window.store = store;
 store.addPage();
 
-// 预加载自定义字体 - 延迟执行以确保store完全初始化
+// 加载所有自定义字体
+const customFonts = [
+  { fontFamily: '華康POP1體W5', url: '/fonts/華康POP1體W5.ttf' },
+  { fontFamily: '華康POP1體W9', url: '/fonts/華康POP1體W9.ttf' },
+  { fontFamily: '華康超特圓體', url: '/fonts/華康超特圓體.ttf' },
+  { fontFamily: 'Altgotisch', url: '/fonts/Altgotisch.ttf' },
+  { fontFamily: 'Boldgod Display', url: '/fonts/Boldgod Display.otf' },
+  { fontFamily: 'Attack Graffiti', url: '/fonts/a Attack Graffiti.ttf' },
+  { fontFamily: '3601 Brudoni Desktop', url: '/fonts/3601 Brudoni Desktop.otf' },
+  { fontFamily: 'Aileron Black Italic', url: '/fonts/Aileron-BlackItalic-3.ttf' },
+  { fontFamily: 'Alexbrush', url: '/fonts/Alexbrush Regular.ttf' },
+  { fontFamily: 'At Askara', url: '/fonts/At Askara.otf' },
+  { fontFamily: 'CAT Reporter', url: '/fonts/CAT Reporter.ttf' }
+];
+
+customFonts.forEach(font => {
+  try {
+    store.addFont(font);
+    console.log(`✅ 已添加自定义字体: ${font.fontFamily}`);
+  } catch (error) {
+    console.error(`❌ 添加字体失败: ${font.fontFamily}`, error);
+  }
+});
+
+console.log(`📝 已加载 ${customFonts.length} 个自定义字体，禁用了 Polotno 默认字体`);
+
+// 验证字体列表
 setTimeout(() => {
-  const customFonts = [
-    { fontFamily: '華康POP1體W5', url: '/fonts/華康POP1體W5.ttf' },
-    { fontFamily: '華康POP1體W9', url: '/fonts/華康POP1體W9.ttf' },
-    { fontFamily: '華康超特圓體', url: '/fonts/華康超特圓體.ttf' }
-  ];
+  console.log('%c🔍 验证字体列表:', 'background: #ff6b6b; color: white; padding: 8px; font-weight: bold;');
+  console.log('store.fonts 数量:', store.fonts?.length || 0);
+  if (store.fonts && store.fonts.length > 0) {
+    console.log('字体列表:', store.fonts.map(f => f.fontFamily || f.name));
+  } else {
+    console.warn('⚠️ 警告: store.fonts 为空!');
+  }
 
-  customFonts.forEach(font => {
-    try {
-      store.addFont(font);
-      console.log(`✅ 已添加字体: ${font.fontFamily}`, font);
-    } catch (error) {
-      console.error(`❌ 添加字体失败: ${font.fontFamily}`, error);
+  // 暴露到 window 方便调试
+  window.debugFonts = () => {
+    console.log('当前字体列表:', store.fonts);
+    return store.fonts;
+  };
+  console.log('💡 提示: 在控制台输入 window.debugFonts() 可以查看当前字体列表');
+}, 2000);
+
+// 强制应用字体选择器样式
+const injectFontSelectStyles = () => {
+  const styleId = 'font-select-override-dynamic';
+
+  // 移除旧样式（如果存在）
+  const existingStyle = document.getElementById(styleId);
+  if (existingStyle) {
+    existingStyle.remove();
+  }
+
+  // 创建新样式元素
+  const style = document.createElement('style');
+  style.id = styleId;
+  style.textContent = `
+    /* 字体选择器动态注入样式 - 最高优先级 - 白底黑字 */
+    select,
+    .polotno-toolbar select,
+    nav select,
+    div select {
+      background-color: #ffffff !important;
+      background-image: none !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+      text-shadow: none !important;
+      border: 2px solid #cccccc !important;
+      font-weight: 700 !important;
+      font-size: 14px !important;
     }
-  });
 
-  console.log('当前store中的所有字体:', store.fonts);
-}, 500);
+    select option,
+    .polotno-toolbar select option {
+      background-color: #ffffff !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+      font-weight: 700 !important;
+      padding: 12px !important;
+    }
+
+    select option:hover,
+    select option:checked {
+      background-color: #1764EA !important;
+      color: #ffffff !important;
+    }
+  `;
+
+  document.head.appendChild(style);
+  console.log('✅ 字体选择器样式已动态注入');
+};
+
+// 立即注入
+injectFontSelectStyles();
+
+// DOM加载完成后再次注入
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', injectFontSelectStyles);
+} else {
+  setTimeout(injectFontSelectStyles, 100);
+}
 
 const project = createProject({ store });
 window.project = project;
@@ -68,13 +161,16 @@ setTimeout(() => {
   // 1. 初始化精确渲染器
   const precisionRenderer = initializePrecisionRenderer(store);
   console.log('✅ 精确渲染器已初始化');
-  
+
   // 2. 初始化Polotno文本渲染增强器
   const textRenderer = initializePolotnoTextRenderer(store);
   console.log('✅ Polotno文本渲染增强器已初始化');
 
   // 3. 调试器已在导入时自动初始化
   psdDebugger.log('PSD调试系统已启动');
+
+  // 4. 强制所有 option 元素使用黑色文字
+  forceOptionBlack();
 
   console.log('%c🎯 PSD超高精度导入系统已完全就绪', 'background: #4CAF50; color: white; padding: 8px; font-weight: bold;');
   console.log('%c📌 系统功能说明:', 'background: #2196F3; color: white; padding: 4px;');

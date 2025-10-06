@@ -1,7 +1,25 @@
 // 我的元素管理器 - 保存和管理用户自定义元素
-import { unstable_registerNextDomDrop } from 'polotno/config';
-
 const STORAGE_KEY = 'polotno_my_elements';
+
+// 创建事件系统用于通知更新
+class MyElementsEventEmitter {
+  constructor() {
+    this.listeners = [];
+  }
+
+  subscribe(callback) {
+    this.listeners.push(callback);
+    return () => {
+      this.listeners = this.listeners.filter(cb => cb !== callback);
+    };
+  }
+
+  emit() {
+    this.listeners.forEach(callback => callback());
+  }
+}
+
+export const myElementsEvents = new MyElementsEventEmitter();
 
 // 获取所有保存的元素
 export const getMyElements = () => {
@@ -21,7 +39,7 @@ export const saveElement = async (element, store) => {
 
     // 创建元素的副本,包含所有属性
     const elementData = {
-      id: `my-element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `my-element-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       type: element.type,
       name: element.name || element.text || `${element.type} Element`,
       savedAt: new Date().toISOString(),
@@ -41,6 +59,10 @@ export const saveElement = async (element, store) => {
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(elements));
     console.log('✅ 元素已保存:', elementData.name);
+
+    // 触发更新事件
+    myElementsEvents.emit();
+
     return true;
   } catch (error) {
     console.error('Error saving element:', error);
@@ -54,6 +76,10 @@ export const deleteElement = (elementId) => {
     const elements = getMyElements();
     const filtered = elements.filter(el => el.id !== elementId);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+
+    // 触发更新事件
+    myElementsEvents.emit();
+
     return true;
   } catch (error) {
     console.error('Error deleting element:', error);
@@ -65,6 +91,10 @@ export const deleteElement = (elementId) => {
 export const clearAllElements = () => {
   try {
     localStorage.removeItem(STORAGE_KEY);
+
+    // 触发更新事件
+    myElementsEvents.emit();
+
     return true;
   } catch (error) {
     console.error('Error clearing elements:', error);
@@ -155,7 +185,7 @@ const drawPlaceholder = (ctx, size, type) => {
 
 // 生成唯一ID
 const generateUniqueId = () => {
-  return `element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return `element-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 };
 
 // 添加元素到画布
@@ -167,71 +197,94 @@ export const addElementToCanvas = (elementData, store) => {
       return;
     }
 
-    // 复制元素数据,移除可能导致不可拖动的属性
+    // 复制元素数据,移除所有可能导致问题的属性
     const {
       id: oldId,
-      locked: oldLocked,
-      selectable: oldSelectable,
-      draggable: oldDraggable,
+      locked,
+      selectable,
+      draggable,
+      // 移除可能是计算属性的字段
+      width: savedWidth,
+      height: savedHeight,
+      // 移除其他可能导致问题的属性
+      alwaysOnTop,
+      showInExport,
+      blurEnabled,
+      blurRadius,
+      brightnessEnabled,
+      brightness,
+      shadowEnabled,
+      shadowBlur,
+      shadowOffsetX,
+      shadowOffsetY,
+      shadowColor,
+      shadowOpacity,
       ...cleanData
     } = elementData.data;
 
-    // 创建新的元素配置,强制设置可拖动属性
+    // 将元素放置在画布中央
+    const centerX = page.width / 2;
+    const centerY = page.height / 2;
+
+    // 确保元素尺寸有效,防止NaN
+    const elementWidth = savedWidth || 100;
+    const elementHeight = savedHeight || 100;
+
+    // 创建新的元素配置,只包含必要属性
     const elementConfig = {
       ...cleanData,
       // 生成新的唯一ID
       id: generateUniqueId(),
-      // 强制设置可交互属性
-      selectable: true,
-      draggable: true,
-      locked: false,
-      removable: true,
+      // 设置位置到画布中央
+      x: centerX - elementWidth / 2,
+      y: centerY - elementHeight / 2,
+      // 明确设置尺寸
+      width: elementWidth,
+      height: elementHeight,
     };
 
     console.log('🔧 准备添加元素:', {
       type: elementConfig.type,
-      draggable: elementConfig.draggable,
-      selectable: elementConfig.selectable,
-      locked: elementConfig.locked
+      x: elementConfig.x,
+      y: elementConfig.y,
+      width: elementConfig.width,
+      height: elementConfig.height
     });
 
     // 从清理后的数据创建新元素
     const newElement = page.addElement(elementConfig);
 
-    // 等待元素创建完成后,再次确保属性正确
-    setTimeout(() => {
-      newElement.set({
-        selectable: true,
-        draggable: true,
-        locked: false,
-        removable: true,
-      });
-      console.log('🔄 元素属性已更新:', {
+    // 立即强制设置交互属性
+    if (newElement) {
+      // 直接修改属性，不使用 set 方法
+      newElement.selectable = true;
+      newElement.draggable = true;
+      newElement.locked = false;
+      newElement.removable = true;
+
+      console.log('✅ 元素已添加到画布:', {
         id: newElement.id,
+        type: newElement.type,
         draggable: newElement.draggable,
         selectable: newElement.selectable,
         locked: newElement.locked
       });
-    }, 100);
 
-    // 将元素放置在画布中央
-    const centerX = page.width / 2;
-    const centerY = page.height / 2;
-    newElement.set({
-      x: centerX - newElement.width / 2,
-      y: centerY - newElement.height / 2,
-    });
+      // 选中新添加的元素
+      store.selectElements([newElement.id]);
 
-    // 选中新添加的元素
-    store.selectElements([newElement.id]);
-
-    console.log('✅ 元素已添加到画布', {
-      id: newElement.id,
-      type: newElement.type,
-      draggable: newElement.draggable,
-      selectable: newElement.selectable,
-      locked: newElement.locked
-    });
+      // 双重确保：延迟再次设置属性
+      setTimeout(() => {
+        newElement.selectable = true;
+        newElement.draggable = true;
+        newElement.locked = false;
+        console.log('🔄 元素属性已再次确认:', {
+          draggable: newElement.draggable,
+          selectable: newElement.selectable,
+          locked: newElement.locked
+        });
+      }, 50);
+    }
 
     return newElement;
   } catch (error) {

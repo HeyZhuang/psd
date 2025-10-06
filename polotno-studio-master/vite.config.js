@@ -13,9 +13,13 @@ export default defineConfig({
     analyzer(),
   ],
 
+  // 显式指定 public 目录
+  publicDir: 'public',
+
   server: {
     host: '0.0.0.0',
     port: 3002,
+    strictPort: true, // 强制使用 3002，不自动切换端口
   },
 
   build: {

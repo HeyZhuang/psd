@@ -8,6 +8,7 @@ import {
   deleteElement,
   clearAllElements,
   addElementToCanvas,
+  myElementsEvents,
 } from '../utils/my-elements-manager';
 
 // 图标
@@ -30,6 +31,15 @@ const MyElementsPanel = observer(({ store }) => {
 
   React.useEffect(() => {
     loadElements();
+
+    // 订阅元素更新事件
+    const unsubscribe = myElementsEvents.subscribe(() => {
+      console.log('📢 我的元素库已更新，重新加载...');
+      loadElements();
+    });
+
+    // 清理订阅
+    return unsubscribe;
   }, [loadElements]);
 
   // 删除元素
@@ -37,7 +47,7 @@ const MyElementsPanel = observer(({ store }) => {
     e.stopPropagation();
     if (window.confirm('确定要删除这个元素吗?')) {
       deleteElement(elementId);
-      loadElements();
+      // 不需要手动调用 loadElements，事件会自动触发
       if (selectedElement?.id === elementId) {
         setSelectedElement(null);
       }
@@ -48,7 +58,7 @@ const MyElementsPanel = observer(({ store }) => {
   const handleClearAll = () => {
     if (window.confirm('确定要清空所有保存的元素吗? 此操作不可恢复!')) {
       clearAllElements();
-      loadElements();
+      // 不需要手动调用 loadElements，事件会自动触发
       setSelectedElement(null);
     }
   };
@@ -90,7 +100,22 @@ const MyElementsPanel = observer(({ store }) => {
       </div>
 
       {/* 元素列表 */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '10px' }}>
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',  // 只允许垂直滚动
+        overflowX: 'hidden', // 禁止水平滚动
+        padding: '8px', // 减小内边距，留更多空间给元素
+        // 隐藏滚动条但保持滚动功能
+        scrollbarWidth: 'none', // Firefox
+        msOverflowStyle: 'none', // IE/Edge
+      }}>
+        {/* 隐藏滚动条 - Webkit浏览器 */}
+        <style>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+
         {elements.length === 0 ? (
           <div style={{
             display: 'flex',
@@ -114,7 +139,10 @@ const MyElementsPanel = observer(({ store }) => {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '10px'
+            gap: '6px', // 减小间隙，确保两个元素完整显示
+            width: '100%',
+            maxWidth: '100%', // 防止内容超出容器
+            boxSizing: 'border-box'
           }}>
             {elements.map((element) => (
               <div
@@ -122,11 +150,14 @@ const MyElementsPanel = observer(({ store }) => {
                 style={{
                   position: 'relative',
                   border: '1px solid #e5e5e5',
-                  borderRadius: '8px',
+                  borderRadius: '6px',
                   overflow: 'hidden',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  backgroundColor: '#fff'
+                  backgroundColor: '#fff',
+                  width: '100%', // 明确设置宽度为100%
+                  minWidth: 0, // 允许收缩以适应容器
+                  boxSizing: 'border-box'
                 }}
                 onClick={() => handleAddToCanvas(element)}
                 onMouseEnter={(e) => {
@@ -138,10 +169,10 @@ const MyElementsPanel = observer(({ store }) => {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                {/* 预览图 */}
+                {/* 预览图 - 缩小尺寸 */}
                 <div style={{
                   width: '100%',
-                  paddingTop: '100%',
+                  paddingTop: '70%', // 调整为70%，使卡片更紧凑
                   position: 'relative',
                   backgroundColor: '#f5f5f5'
                 }}>
@@ -155,41 +186,42 @@ const MyElementsPanel = observer(({ store }) => {
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        objectFit: 'contain'
+                        objectFit: 'contain',
+                        padding: '4px' // 添加内边距
                       }}
                     />
                   )}
                 </div>
 
-                {/* 元素信息 */}
+                {/* 元素信息 - 精简布局 */}
                 <div style={{
-                  padding: '8px',
-                  fontSize: '12px',
-                  borderTop: '1px solid #e5e5e5'
+                  padding: '5px 6px',
+                  fontSize: '10px',
+                  borderTop: '1px solid #e5e5e5',
+                  width: '100%',
+                  boxSizing: 'border-box'
                 }}>
                   <div style={{
                     fontWeight: 500,
-                    marginBottom: '2px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    lineHeight: '1.3',
+                    width: '100%' // 确保文字容器宽度正确
                   }}>
                     {element.name}
                   </div>
-                  <div style={{ color: '#999', fontSize: '11px' }}>
-                    {element.type}
-                  </div>
                 </div>
 
-                {/* 删除按钮 */}
+                {/* 删除按钮 - 缩小尺寸 */}
                 <button
                   onClick={(e) => handleDelete(element.id, e)}
                   style={{
                     position: 'absolute',
-                    top: '5px',
-                    right: '5px',
-                    width: '24px',
-                    height: '24px',
+                    top: '4px',
+                    right: '4px',
+                    width: '20px',
+                    height: '20px',
                     borderRadius: '50%',
                     border: 'none',
                     backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -198,7 +230,7 @@ const MyElementsPanel = observer(({ store }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '16px',
+                    fontSize: '14px',
                     fontWeight: 'bold',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                     transition: 'all 0.2s'

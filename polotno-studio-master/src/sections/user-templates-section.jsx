@@ -70,179 +70,208 @@ const TemplateItem = ({ image, onClick, getImageSize, ...props }) => {
   const imageSize = getImageSize(image);
   
   return (
-    <div 
+    <div
       onClick={handleClick}
-      style={{ 
-        position: 'relative', 
+      style={{
+        position: 'relative',
         cursor: 'pointer',
-        opacity: isDeleting ? 0.5 : 1
+        opacity: isDeleting ? 0.5 : 1,
+        width: '100%',
+        minWidth: 0,
+        boxSizing: 'border-box'
       }}
     >
-      <Card interactive style={{ margin: '5px', overflow: 'hidden' }}>
-        <div style={{ position: 'relative' }}>
+      <div style={{
+        margin: '0',
+        overflow: 'hidden',
+        width: '100%',
+        boxSizing: 'border-box',
+        borderRadius: '6px',
+        border: '1px solid #e1e8ed',
+        backgroundColor: '#fff',
+        cursor: 'pointer',
+        transition: 'box-shadow 0.2s, transform 0.2s'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        e.currentTarget.style.transform = 'translateY(-2px)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = 'none';
+        e.currentTarget.style.transform = 'translateY(0)';
+      }}>
+        {/* 预览图容器 - 正方形容器 */}
+        <div style={{
+          position: 'relative',
+          backgroundColor: '#f5f5f5',
+          width: '100%',
+          paddingBottom: '100%', // 创建正方形容器（高度等于宽度）
+          overflow: 'hidden'
+        }}>
           <img
             src={image.preview || image.thumbnail}
             style={{
-              width: '100%',
-              height: `${imageSize.height}px`,
-              objectFit: 'cover',
-              display: 'block'
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              maxWidth: '100%',
+              maxHeight: '100%',
+              width: 'auto',
+              height: 'auto',
+              display: 'block',
+              objectFit: 'contain'
             }}
             alt={image.name}
           />
           
-          {/* 模板信息覆盖层 */}
+          {/* 操作按钮组 - 缩小尺寸 */}
           <div style={{
             position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
-            color: 'white',
-            padding: '10px 8px 8px',
-            fontSize: '12px'
-          }}>
-            {isEditing ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <input
-                  type="text"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  style={{
-                    background: 'rgba(255,255,255,0.9)',
-                    color: '#000',
-                    border: 'none',
-                    borderRadius: '3px',
-                    padding: '4px 6px',
-                    fontSize: '12px',
-                    fontWeight: 'bold'
-                  }}
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSaveRename();
-                    if (e.key === 'Escape') handleCancelRename();
-                  }}
-                />
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <button
-                    onClick={handleSaveRename}
-                    style={{
-                      background: '#28a745',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '3px',
-                      padding: '2px 6px',
-                      fontSize: '10px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    保存
-                  </button>
-                  <button
-                    onClick={handleCancelRename}
-                    style={{
-                      background: '#6c757d',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '3px',
-                      padding: '2px 6px',
-                      fontSize: '10px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    取消
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
-                  {image.name}
-                </div>
-                <div style={{ opacity: 0.9 }}>
-                  {image.metadata?.dimensions?.width} × {image.metadata?.dimensions?.height}
-                  {image.metadata?.layerCount && ` • ${image.metadata.layerCount} 图层`}
-                </div>
-                {image.metadata?.tags && (
-                  <div style={{ 
-                    marginTop: '4px',
-                    fontSize: '10px',
-                    opacity: 0.8
-                  }}>
-                    {image.metadata.tags.slice(0, 3).map(tag => (
-                      <span key={tag} style={{
-                        background: 'rgba(255,255,255,0.2)',
-                        padding: '1px 4px',
-                        borderRadius: '2px',
-                        marginRight: '4px'
-                      }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-          
-          {/* 操作按钮组 */}
-          <div style={{
-            position: 'absolute',
-            top: '5px',
-            right: '5px',
+            top: '3px',
+            right: '3px',
             display: 'flex',
-            gap: '4px'
+            gap: '3px'
           }}>
             {/* 编辑名称按钮 */}
-            <Button
-              icon="edit"
-              minimal
-              small
-              style={{
-                background: 'rgba(0,0,0,0.5)',
-                color: 'white'
-              }}
+            <button
               onClick={handleRename}
-              title="编辑模板名称"
               disabled={isEditing || isDeleting}
-            />
-            
-            {/* 删除按钮 */}
-            <Button
-              icon="trash"
-              minimal
-              small
-              intent="danger"
+              title="编辑"
               style={{
-                background: 'rgba(0,0,0,0.5)',
-                color: 'white'
+                width: '20px',
+                height: '20px',
+                borderRadius: '4px',
+                border: 'none',
+                background: 'rgba(0,0,0,0.6)',
+                color: 'white',
+                cursor: isEditing || isDeleting ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '10px',
+                opacity: isEditing || isDeleting ? 0.5 : 1
               }}
+            >
+              ✏️
+            </button>
+
+            {/* 删除按钮 */}
+            <button
               onClick={handleDelete}
-              loading={isDeleting}
               disabled={isDeleting || isEditing}
-              title="删除模板"
-            />
+              title="删除"
+              style={{
+                width: '20px',
+                height: '20px',
+                borderRadius: '4px',
+                border: 'none',
+                background: 'rgba(220, 53, 69, 0.8)',
+                color: 'white',
+                cursor: isDeleting || isEditing ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                opacity: isDeleting || isEditing ? 0.5 : 1
+              }}
+            >
+              {isDeleting ? '...' : '×'}
+            </button>
           </div>
-          
-          {/* 应用按钮 */}
-          <Button
-            icon="play"
-            minimal
-            small
-            intent="primary"
-            style={{
-              position: 'absolute',
-              top: '5px',
-              left: '5px',
-              background: 'rgba(0,0,0,0.5)',
-              color: 'white'
-            }}
-            onClick={handleClick}
-            title="应用此模板"
-            disabled={isEditing}
-          />
         </div>
-      </Card>
+
+        {/* 模板名称和信息 - 显示在图片下方 */}
+        <div style={{
+          padding: '6px 8px',
+          borderTop: '1px solid #e5e5e5',
+          backgroundColor: '#fff',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
+          {isEditing ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                style={{
+                  width: '100%',
+                  border: '1px solid #1764EA',
+                  borderRadius: '3px',
+                  padding: '4px 6px',
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  boxSizing: 'border-box'
+                }}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSaveRename();
+                  if (e.key === 'Escape') handleCancelRename();
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button
+                  onClick={handleSaveRename}
+                  style={{
+                    flex: 1,
+                    background: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '3px',
+                    padding: '3px 6px',
+                    fontSize: '10px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  保存
+                </button>
+                <button
+                  onClick={handleCancelRename}
+                  style={{
+                    flex: 1,
+                    background: '#6c757d',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '3px',
+                    padding: '3px 6px',
+                    fontSize: '10px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  取消
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div style={{
+                fontWeight: 600,
+                marginBottom: '2px',
+                fontSize: '11px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                width: '100%',
+                color: '#333'
+              }}>
+                {image.name}
+              </div>
+              <div style={{
+                fontSize: '9px',
+                color: '#666',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}>
+                {image.metadata?.dimensions?.width} × {image.metadata?.dimensions?.height}
+                {image.metadata?.layerCount && ` • ${image.metadata.layerCount}层`}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -828,41 +857,65 @@ export const UserTemplatesPanel = observer(({ store }) => {
       </div>
 
       {/* 模板列表 */}
-      <div style={{ flex: 1, overflow: 'auto' }}>
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',  // 只允许垂直滚动
+        overflowX: 'hidden', // 禁止水平滚动
+        padding: '8px',
+        // 隐藏滚动条
+        scrollbarWidth: 'none', // Firefox
+        msOverflowStyle: 'none', // IE/Edge
+      }}>
+        {/* 隐藏滚动条 - Webkit浏览器 */}
+        <style>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+
         {isLoading ? (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            height: '200px' 
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '200px'
           }}>
             <Spinner size={30} />
           </div>
         ) : filteredTemplates.length === 0 ? (
-          <div style={{ 
-            textAlign: 'center', 
+          <div style={{
+            textAlign: 'center',
             padding: '40px 20px',
             color: '#5c7080'
           }}>
             <Icon icon="folder-open" size={40} style={{ marginBottom: '10px' }} />
             <div>
-              {templates.length === 0 
+              {templates.length === 0
                 ? '还没有保存的模板\n上传PSD文件时选择"保存为模板"来创建模板'
                 : '没有找到匹配的模板\n尝试调整搜索条件'
               }
             </div>
           </div>
         ) : (
-          <ImagesGrid
-            images={filteredTemplates}
-            getPreview={(template) => template.preview || template.thumbnail}
-            getImageSize={() => ({ width: 200, height: 140 })}
-            isLoading={isLoading}
-            onSelect={applyTemplate}
-            ItemComponent={(props) => (
-              <TemplateItem {...props} onDelete={handleTemplateDelete} onUpdate={handleTemplateUpdate} />
-            )}
-          />
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)', // 严格一排两个
+            gap: '6px',
+            width: '100%',
+            maxWidth: '100%',
+            boxSizing: 'border-box'
+          }}>
+            {filteredTemplates.map((template) => (
+              <TemplateItem
+                key={template.id}
+                image={template}
+                onClick={applyTemplate}
+                getImageSize={() => ({ width: '100%', height: 'auto' })}
+                onDelete={handleTemplateDelete}
+                onUpdate={handleTemplateUpdate}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>

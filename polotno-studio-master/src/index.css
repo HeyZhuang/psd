@@ -6,8 +6,8 @@ body {
 
 /* ========== 全局拖动性能优化 - 消除抖动 ========== */
 
-/* 禁用不必要的动画和过渡 */
-*,
+/* 禁用不必要的动画和过渡 - 但排除容器宽度变化 */
+*:not(.polotno-app-container):not(.polotno-container),
 *::before,
 *::after {
     /* 移除所有可能导致抖动的过渡效果 */
@@ -19,6 +19,12 @@ body {
     -webkit-animation: none !important;
     -moz-animation: none !important;
     animation: none !important;
+}
+
+/* 允许容器宽度平滑过渡 */
+.polotno-app-container,
+.polotno-container {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* GPU 加速优化 */
@@ -50,7 +56,12 @@ body {
 /* 固定容器大小，防止重排 */
 .polotno-container,
 .polotno-app-container {
-    contain: layout style paint !important;
+    /* 移除 contain，允许容器响应宽度变化 */
+    display: flex !important;
+    flex-direction: row !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    /* 不要固定宽度，让它通过 inline style 控制 */
 }
 
 /* 工具栏独立渲染层，避免重排 */
@@ -166,7 +177,7 @@ div.polotno-workspace-container nav.bp5-navbar:not(.polotno-toolbar),
     font-weight: 500 !important;
 }
 
-/* 工具栏下拉选择框 - 黑色背景白色文字 */
+/* 工具栏下拉选择框 - 白色背景黑色文字 */
 .polotno-toolbar select,
 .polotno-toolbar .bp5-select select,
 .polotno-toolbar .bp5-html-select select,
@@ -180,28 +191,32 @@ body .bp5-dark .bp5-navbar.polotno-toolbar .bp5-select select,
 .bp5-dark select,
 .bp5-dark .bp5-select select,
 .bp5-dark .bp5-html-select select {
-    background-color: #2b2b2b !important;
-    color: #ffffff !important;
-    border: 1px solid #555555 !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #d5d5d5 !important;
     border-radius: 6px !important;
     height: 32px !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    -webkit-text-fill-color: #ffffff !important;
+    -webkit-text-fill-color: #000000 !important;
     text-shadow: none !important;
     opacity: 1 !important;
+    padding: 4px 8px !important;
 }
 
-/* 确保所有select元素的文字都是白色 */
+/* 确保所有select元素的文字都是黑色，背景白色 */
 select,
 .bp5-select select,
 .bp5-html-select select {
-    background-color: #2b2b2b !important;
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    text-shadow: none !important;
 }
 
-/* 下拉框选项 - 黑底白字 */
+/* 下拉框选项 - 白底黑字 */
 .polotno-toolbar select option,
 .polotno-toolbar .bp5-select select option,
 .polotno-toolbar .bp5-html-select select option,
@@ -210,8 +225,20 @@ select,
 .bp5-navbar.polotno-toolbar .bp5-html-select select option,
 body .bp5-dark .polotno-toolbar select option,
 body .bp5-dark .bp5-navbar.polotno-toolbar select option {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    -webkit-text-fill-color: #000000 !important;
+    padding: 8px 12px !important;
+    font-weight: 600 !important;
+}
+
+/* 下拉框选项悬停和选中状态 */
+.polotno-toolbar select option:hover,
+.polotno-toolbar select option:checked,
+.polotno-toolbar .bp5-select select option:hover,
+.polotno-toolbar .bp5-select select option:checked {
+    background-color: #1764EA !important;
     color: #ffffff !important;
-    background-color: #2b2b2b !important;
     -webkit-text-fill-color: #ffffff !important;
 }
 
@@ -393,26 +420,39 @@ body .bp5-dark .bp5-menu-item.bp5-active {
     background-color: #e8e8e8 !important;
 }
 
-/* 下拉选择框 - 黑底白字 */
+/* 下拉选择框 - 白底黑字 */
 body .bp5-dark .bp5-html-select select,
 body .bp5-dark .bp5-select select {
-    background-color: #2b2b2b !important;
-    color: #ffffff !important;
-    border: 1px solid #555555 !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #d5d5d5 !important;
     border-radius: 6px;
     height: 36px;
     font-size: 14px;
     font-weight: 600 !important;
-    box-shadow: none;
-    -webkit-text-fill-color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    -webkit-text-fill-color: #000000 !important;
+    text-shadow: none !important;
+    padding: 4px 8px !important;
 }
 
-/* 下拉选择框选项 */
+/* 下拉选择框选项 - 白底黑字 */
 body .bp5-dark .bp5-html-select select option,
 body .bp5-dark .bp5-select select option {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    -webkit-text-fill-color: #000000 !important;
+    padding: 8px 12px !important;
+}
+
+/* 下拉选择框选项悬停和选中 */
+body .bp5-dark .bp5-html-select select option:hover,
+body .bp5-dark .bp5-html-select select option:checked,
+body .bp5-dark .bp5-select select option:hover,
+body .bp5-dark .bp5-select select option:checked {
+    background-color: #1764EA !important;
     color: #ffffff !important;
-    background-color: #2b2b2b !important;
-    -webkit-text-fill-color: #ffffff !important;
 }
 
 body .bp5-dark .bp5-html-select .bp5-icon {
@@ -997,13 +1037,18 @@ body .polotno-panel-container picture {
 }
 /* ========== 编辑区画布优化 - 现代化设计工作室风格 ========== */
 
-/* WorkspaceWrap 容器 - 去除额外边距 */
+/* WorkspaceWrap 容器 - 确保能够填充剩余空间 */
 .polotno-workspace-wrap,
 div[class*="WorkspaceWrap"] {
     padding: 0 !important;
     margin: 0 !important;
-    width: 100% !important;
+    /* 使用 flex: 1 自动填充剩余空间 */
+    flex: 1 !important;
+    min-width: 0 !important;
     height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
 /* 工作区容器 - 渐变背景，专业设计感 */
@@ -1632,7 +1677,7 @@ svg tspan {
 }
 
 /* ========== 最高优先级样式覆盖 - 必须放在文件最后 ========== */
-/* 强制所有下拉选择框使用黑底白字 - 超高优先级 */
+/* 强制所有下拉选择框使用白底黑字 - 超高优先级 */
 html body .bp5-dark select,
 html body .bp5-dark .bp5-select select,
 html body .bp5-dark .bp5-html-select select,
@@ -1643,22 +1688,125 @@ html body .polotno-toolbar select,
 html body .polotno-toolbar .bp5-select select,
 html body .bp5-navbar select,
 html body .bp5-navbar .bp5-select select {
-    background-color: #2b2b2b !important;
-    background: #2b2b2b !important;
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-    border: 1px solid #555555 !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    border: 1px solid #d5d5d5 !important;
     font-weight: 600 !important;
     text-shadow: none !important;
     opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    padding: 4px 8px !important;
 }
 
-/* 下拉选项也必须是黑底白字 */
+/* 下拉选项也必须是白底黑字 - 最高优先级 */
 html body select option,
 html body .bp5-select select option,
 html body .bp5-html-select select option {
-    background-color: #2b2b2b !important;
-    background: #2b2b2b !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    padding: 8px 12px !important;
+    font-weight: 600 !important;
+}
+
+/* 下拉选项悬停和选中状态 - 蓝色高亮 */
+html body select option:hover,
+html body select option:checked,
+html body select option:focus,
+html body .bp5-select select option:hover,
+html body .bp5-select select option:checked,
+html body .bp5-select select option:focus,
+html body .bp5-html-select select option:hover,
+html body .bp5-html-select select option:checked,
+html body .bp5-html-select select option:focus {
+    background-color: #1764EA !important;
+    background: #1764EA !important;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
+}
+
+/* ========== 字体选择器特殊优化 - 最高优先级 ========== */
+/* 专门针对 Polotno 工具栏中的字体选择下拉框 */
+html body .polotno-toolbar select[style*="font"],
+html body .polotno-toolbar .bp5-select select[style*="font"],
+html body .polotno-toolbar select,
+html body .bp5-navbar.polotno-toolbar select,
+html body .bp5-dark .polotno-toolbar select,
+html body div[class*="toolbar"] select,
+html body nav[class*="toolbar"] select {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    -moz-text-fill-color: #000000 !important;
+    text-shadow: none !important;
+    border: 2px solid #d5d5d5 !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    padding: 6px 10px !important;
+}
+
+/* 字体选择器选项 - 白色背景，黑色文字 */
+html body .polotno-toolbar select option,
+html body .bp5-navbar.polotno-toolbar select option,
+html body .bp5-dark .polotno-toolbar select option,
+html body div[class*="toolbar"] select option,
+html body nav[class*="toolbar"] select option {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    -moz-text-fill-color: #000000 !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    padding: 10px 15px !important;
+}
+
+/* 字体选择器选项 - 悬停和选中时蓝色背景 */
+html body .polotno-toolbar select option:hover,
+html body .polotno-toolbar select option:checked,
+html body .polotno-toolbar select option:focus,
+html body .polotno-toolbar select option:active {
+    background-color: #1764EA !important;
+    background: #1764EA !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* ========== 超级强制样式 - 确保所有option都是黑色 ========== */
+/* 针对所有可能的option元素 */
+* option,
+html option,
+body option,
+html body option,
+html body * option,
+html body select > option,
+html body .polotno-toolbar select > option,
+html body nav select > option,
+html body div select > option {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    -moz-text-fill-color: #000000 !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    font-weight: 700 !important;
+}
+
+/* option悬停和选中 - 蓝底白字 */
+* option:hover,
+* option:checked,
+* option:focus,
+html body select > option:hover,
+html body select > option:checked,
+html body select > option:focus {
+    background-color: #1764EA !important;
+    background: #1764EA !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    -moz-text-fill-color: #ffffff !important;
 }

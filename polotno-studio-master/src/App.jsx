@@ -32,6 +32,7 @@ import { MyElementsSection } from './sections/my-elements-section';
 
 import { useProject } from './project';
 import { saveElement } from './utils/my-elements-manager';
+import { applyFontSelectStyles } from './utils/font-select-fixer';
 
 import fr from './translations/fr';
 import en from './translations/en';
@@ -124,17 +125,55 @@ const App = observer(({ store }) => {
   const project = useProject();
   const height = useHeight();
   const [isLayersPanelOpen, setIsLayersPanelOpen] = React.useState(true);
+  const [rightPanelWidth, setRightPanelWidth] = React.useState(320);
 
   // 使用 ref 避免不必要的重渲染
   const workspaceWrapRef = React.useRef(null);
+  const resizeTimeoutRef = React.useRef(null);
 
-  // 使用 useEffect 更新 margin，避免重渲染导致抖动
+  // 监听右侧面板宽度变化，动态调整画布
   React.useEffect(() => {
-    if (workspaceWrapRef.current) {
-      const marginRight = isLayersPanelOpen ? '320px' : '50px';
-      workspaceWrapRef.current.style.marginRight = marginRight;
-    }
+    const newWidth = isLayersPanelOpen ? 320 : 50;
+    console.log('🎨 右侧面板宽度变化:', newWidth, 'px, 图层面板', isLayersPanelOpen ? '展开' : '折叠');
+    setRightPanelWidth(newWidth);
   }, [isLayersPanelOpen]);
+
+  // 监听右侧面板宽度变化，触发 Polotno 画布重新计算大小
+  React.useEffect(() => {
+    console.log('📐 PolotnoContainer 宽度计算: calc(100% -', rightPanelWidth, 'px)');
+
+    // 清除之前的定时器
+    if (resizeTimeoutRef.current) {
+      clearTimeout(resizeTimeoutRef.current);
+    }
+
+    // 立即触发一次 resize
+    console.log('🔄 触发 resize 事件 (立即)');
+    window.dispatchEvent(new Event('resize'));
+
+    // 在过渡期间多次触发 resize 确保平滑更新
+    const resizeIntervals = [50, 100, 150, 200, 250, 300, 350];
+    resizeIntervals.forEach(delay => {
+      setTimeout(() => {
+        console.log(`🔄 触发 resize 事件 (${delay}ms)`);
+        window.dispatchEvent(new Event('resize'));
+      }, delay);
+    });
+
+    // 设置最终的清理定时器
+    resizeTimeoutRef.current = setTimeout(() => {
+      // 过渡完成后最终触发
+      console.log('🔄 触发 resize 事件 (最终)');
+      window.dispatchEvent(new Event('resize'));
+      resizeTimeoutRef.current = null;
+    }, 400);
+
+    return () => {
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
+  }, [rightPanelWidth]);
 
   React.useEffect(() => {
     if (project.language.startsWith('fr')) {
@@ -153,22 +192,15 @@ const App = observer(({ store }) => {
   }, [project.language]);
 
   React.useEffect(() => {
+    // 加载项目（字体已经在 index.jsx 中预加载）
     project.firstLoad();
 
-    // 预加载自定义字体
-    const customFonts = [
-      { fontFamily: '華康POP1體W5', url: '/fonts/華康POP1體W5.ttf' },
-      { fontFamily: '華康POP1體W9', url: '/fonts/華康POP1體W9.ttf' },
-      { fontFamily: '華康超特圓體', url: '/fonts/華康超特圓體.ttf' }
-    ];
-
-    // 延迟添加字体以确保UI已经渲染
+    // 延迟应用字体选择器样式修复，确保 Polotno 完全渲染
+    let cleanupFontStyles;
     setTimeout(() => {
-      customFonts.forEach(font => {
-        store.addFont(font);
-        console.log(`✅ 字体已添加到面板: ${font.fontFamily}`);
-      });
-    }, 1000);
+      console.log('🚀 开始应用字体选择器样式修复...');
+      cleanupFontStyles = applyFontSelectStyles();
+    }, 2000);
 
     // 添加右键菜单功能 - 保存元素到我的元素库
     const handleContextMenu = (e) => {
@@ -219,7 +251,13 @@ const App = observer(({ store }) => {
           if (success) {
             // 显示成功提示
             const toast = document.createElement('div');
-            toast.textContent = '✅ 元素已保存到我的元素库';
+            const elementName = element.name || element.text || element.type;
+            toast.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>✅</span>
+                <span>"${elementName}" 已保存到我的元素库</span>
+              </div>
+            `;
             toast.style.cssText = `
               position: fixed;
               top: 20px;
@@ -232,9 +270,34 @@ const App = observer(({ store }) => {
               box-shadow: 0 4px 12px rgba(0,0,0,0.2);
               z-index: 10001;
               font-size: 14px;
+              animation: slideDown 0.3s ease-out;
             `;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+
+            // 添加动画样式
+            if (!document.getElementById('toast-animation-style')) {
+              const style = document.createElement('style');
+              style.id = 'toast-animation-style';
+              style.textContent = `
+                @keyframes slideDown {
+                  from {
+                    transform: translateX(-50%) translateY(-100%);
+                    opacity: 0;
+                  }
+                  to {
+                    transform: translateX(-50%) translateY(0);
+                    opacity: 1;
+                  }
+                }
+              `;
+              document.head.appendChild(style);
+            }
+
+            setTimeout(() => {
+              toast.style.transition = 'opacity 0.3s ease-out';
+              toast.style.opacity = '0';
+              setTimeout(() => toast.remove(), 300);
+            }, 2000);
           }
           menu.remove();
         };
@@ -265,6 +328,10 @@ const App = observer(({ store }) => {
       if (workspace) {
         workspace.removeEventListener('contextmenu', handleContextMenu);
       }
+      // 清理字体样式监听器
+      if (cleanupFontStyles) {
+        cleanupFontStyles();
+      }
     };
   }, [store]);
 
@@ -294,8 +361,19 @@ const App = observer(({ store }) => {
       onDrop={handleDrop}
     >
       <Topbar store={store} />
-      <div style={{ height: 'calc(100% - 50px)', position: 'relative' }}>
-        <PolotnoContainer className="polotno-app-container">
+      <div style={{
+        height: 'calc(100% - 50px)',
+        position: 'relative',
+        display: 'flex',
+        overflow: 'hidden'
+      }}>
+        <PolotnoContainer
+          className="polotno-app-container"
+          style={{
+            width: `calc(100% - ${rightPanelWidth}px)`,
+            transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+        >
           <SidePanelWrap>
             <SidePanel store={store} sections={DEFAULT_SECTIONS} />
           </SidePanelWrap>
