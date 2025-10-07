@@ -212,17 +212,46 @@ export async function loadAllPresetFonts() {
 }
 
 /**
- * 初始化字体系统 - 注册已保存的字体
+ * 初始化字体系统 - 注册已保存的字体，首次启动时自动加载预设字体
  */
 export async function initializeCustomFonts() {
   const fonts = getCustomFonts();
   console.log(`🎨 初始化自定义字体系统 (${fonts.length} 个字体)`);
 
-  for (const font of fonts) {
-    try {
-      await registerFont(font.family, font.url);
-    } catch (error) {
-      console.error('❌ 初始化字体失败:', font.name, error);
+  // 首次启动检测：如果没有保存任何字体，自动加载所有预设字体
+  if (fonts.length === 0) {
+    console.log('🆕 首次启动检测到，开始自动加载预设字体...');
+
+    for (const fontInfo of PRESET_FONTS) {
+      try {
+        console.log(`📦 正在加载预设字体: ${fontInfo.name}...`);
+        const success = await loadPresetFont(fontInfo);
+        if (success) {
+          console.log(`✅ ${fontInfo.name} 加载成功`);
+        } else {
+          console.warn(`⚠️ ${fontInfo.name} 加载失败`);
+        }
+        // 添加延迟避免加载过快导致问题
+        await new Promise(resolve => setTimeout(resolve, 100));
+      } catch (error) {
+        console.error(`❌ 加载预设字体失败: ${fontInfo.name}`, error);
+      }
+    }
+
+    console.log('✅ 预设字体加载完成');
+
+    // 重新获取已保存的字体
+    const updatedFonts = getCustomFonts();
+    console.log(`📊 现在共有 ${updatedFonts.length} 个字体已保存`);
+  } else {
+    // 注册已保存的字体
+    for (const font of fonts) {
+      try {
+        await registerFont(font.family, font.url);
+        console.log(`✅ 字体已注册: ${font.name}`);
+      } catch (error) {
+        console.error('❌ 初始化字体失败:', font.name, error);
+      }
     }
   }
 
