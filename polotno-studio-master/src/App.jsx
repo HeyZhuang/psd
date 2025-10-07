@@ -45,9 +45,10 @@ import zhCh from './translations/zh-ch';
 
 import Topbar from './topbar/topbar';
 import { RightLayersPanel } from './components/RightLayersPanel';
+import { CustomToolbar } from './components/CustomToolbar';
 
-// 优化的 Toolbar - 防止不必要的重渲染
-const MemoizedToolbar = React.memo(Toolbar);
+// 优化的 Toolbar - 使用自定义工具栏
+const MemoizedToolbar = React.memo(CustomToolbar);
 const MemoizedWorkspace = React.memo(Workspace);
 const MemoizedZoomButtons = React.memo(ZoomButtons);
 const MemoizedPagesTimeline = React.memo(PagesTimeline);
