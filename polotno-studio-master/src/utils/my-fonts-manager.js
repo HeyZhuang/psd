@@ -34,7 +34,7 @@ export function getCustomFonts() {
 
 /**
  * 保存字体到localStorage
- * @param {Object} fontData - { name, family, url, fileName }
+ * @param {Object} fontData - { name, family, url, fileName, isPreset }
  */
 export function saveCustomFont(fontData) {
   try {
@@ -58,15 +58,20 @@ export function saveCustomFont(fontData) {
       id: Date.now().toString(),
       name: fontData.name,
       family: fontData.family,
-      url: fontData.url, // Base64 data URL
       fileName: fontData.fileName,
-      addedAt: new Date().toISOString()
+      addedAt: new Date().toISOString(),
+      isPreset: fontData.isPreset || false, // 标记是否为预设字体
     };
+
+    // 只有非预设字体（用户上传）才保存 Base64
+    if (!fontData.isPreset && fontData.url) {
+      newFont.url = fontData.url; // Base64 data URL for user uploads
+    }
 
     fonts.push(newFont);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(fonts));
 
-    console.log('✅ 字体已保存:', newFont.name);
+    console.log('✅ 字体已保存:', newFont.name, fontData.isPreset ? '(预设)' : '(自定义)');
     return true;
   } catch (error) {
     console.error('❌ 保存字体失败:', error);
@@ -142,45 +147,28 @@ export async function registerFont(fontFamily, fontUrl) {
 }
 
 /**
- * 从预设字体文件夹加载字体
+ * 从预设字体文件夹加载字体（不保存 Base64，直接使用 URL）
  */
 export async function loadPresetFont(fontInfo) {
   try {
     const fontPath = `/fonts/${fontInfo.fileName}`;
-    const response = await fetch(fontPath);
 
-    if (!response.ok) {
-      throw new Error(`无法加载字体: ${fontPath}`);
+    // 直接使用字体文件 URL 注册字体，不转换为 Base64
+    const registered = await registerFont(fontInfo.family, fontPath);
+
+    if (registered) {
+      // 保存字体引用到 localStorage（不保存 Base64）
+      const saved = saveCustomFont({
+        name: fontInfo.name,
+        family: fontInfo.family,
+        fileName: fontInfo.fileName,
+        isPreset: true, // 标记为预设字体
+      });
+
+      return saved;
+    } else {
+      throw new Error('字体注册失败');
     }
-
-    const blob = await response.blob();
-    const reader = new FileReader();
-
-    return new Promise((resolve, reject) => {
-      reader.onload = async (e) => {
-        const base64Url = e.target.result;
-
-        // 注册字体
-        const registered = await registerFont(fontInfo.family, base64Url);
-
-        if (registered) {
-          // 保存到localStorage
-          const saved = saveCustomFont({
-            name: fontInfo.name,
-            family: fontInfo.family,
-            url: base64Url,
-            fileName: fontInfo.fileName
-          });
-
-          resolve(saved);
-        } else {
-          reject(new Error('字体注册失败'));
-        }
-      };
-
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
   } catch (error) {
     console.error('❌ 加载预设字体失败:', fontInfo.name, error);
     return false;
@@ -247,8 +235,17 @@ export async function initializeCustomFonts() {
     // 注册已保存的字体
     for (const font of fonts) {
       try {
-        await registerFont(font.family, font.url);
-        console.log(`✅ 字体已注册: ${font.name}`);
+        // 预设字体从 /fonts 目录加载，自定义字体使用保存的 Base64
+        const fontUrl = font.isPreset
+          ? `/fonts/${font.fileName}`
+          : font.url;
+
+        if (fontUrl) {
+          await registerFont(font.family, fontUrl);
+          console.log(`✅ 字体已注册: ${font.name}`, font.isPreset ? '(预设)' : '(自定义)');
+        } else {
+          console.warn(`⚠️ 跳过无效字体: ${font.name}`);
+        }
       } catch (error) {
         console.error('❌ 初始化字体失败:', font.name, error);
       }
