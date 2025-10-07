@@ -15,13 +15,23 @@ export const CustomFontSelector = observer(({ store }) => {
     const fonts = getCustomFonts();
     setCustomFonts(fonts);
     console.log('🎨 CustomFontSelector: 加载了', fonts.length, '个自定义字体');
+    console.log('📋 字体列表:', fonts.map(f => f.name));
   }, []);
 
   // 监听 store.fonts 变化（当有新字体添加时）
   React.useEffect(() => {
     const fonts = getCustomFonts();
     setCustomFonts(fonts);
+    console.log('🔄 字体列表更新:', fonts.length, '个字体');
   }, [store.fonts?.length]);
+
+  // 添加挂载日志
+  React.useEffect(() => {
+    console.log('✅ CustomFontSelector 已挂载到 DOM');
+    return () => {
+      console.log('🔴 CustomFontSelector 已卸载');
+    };
+  }, []);
 
   // 获取当前选中元素的字体
   const currentFont = selectedElement?.type === 'text'
