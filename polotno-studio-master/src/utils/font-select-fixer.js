@@ -90,12 +90,17 @@ export const applyFontSelectStyles = () => {
   document.head.appendChild(style);
 
   // 2. 直接修改所有现有的 select 元素
+  let lastSelectCount = 0;
   const applyToSelects = () => {
     const selects = document.querySelectorAll('select');
-    console.log(`%c🔧 找到 ${selects.length} 个 select 元素，正在应用样式...`, 'background: #2196F3; color: white; padding: 4px;');
+
+    // 只在数量变化时记录日志
+    if (selects.length !== lastSelectCount) {
+      console.log(`%c🔧 找到 ${selects.length} 个 select 元素，正在应用样式...`, 'background: #2196F3; color: white; padding: 4px;');
+      lastSelectCount = selects.length;
+    }
 
     if (selects.length === 0) {
-      console.warn('⚠️ 警告：未找到任何 select 元素！Polotno 可能还未渲染完成。');
       return;
     }
 
@@ -115,11 +120,8 @@ export const applyFontSelectStyles = () => {
       select.style.setProperty('opacity', '1', 'important');
       select.style.setProperty('font-family', 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', 'important');
 
-      console.log(`  ✅ Select #${index + 1}:`, select.className, '- 白底黑字已应用（系统字体）');
-
       // 修改所有 option - 白色背景，黑色文字
       const options = select.querySelectorAll('option');
-      console.log(`  📋 Select #${index + 1} 包含 ${options.length} 个 option 元素`);
 
       options.forEach((option, optIndex) => {
         // 移除所有内联样式，确保CSS优先级生效
@@ -148,9 +150,6 @@ export const applyFontSelectStyles = () => {
         option.style.setProperty('padding', '10px', 'important');
         option.style.setProperty('opacity', '1', 'important');
         option.style.setProperty('font-family', 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', 'important');
-
-        const fontName = option.textContent.trim();
-        console.log(`    ✅ Option #${optIndex + 1}: "${fontName}" - 黑色文字，系统字体`);
       });
     });
   };
@@ -166,9 +165,8 @@ export const applyFontSelectStyles = () => {
   setTimeout(applyToSelects, 2000);
   setTimeout(applyToSelects, 3000);
 
-  // 定期强制刷新，对抗 Polotno SDK 的动态样式
-  // 使用更频繁的刷新以确保样式始终正确
-  setInterval(applyToSelects, 500);
+  // 减少刷新频率以提高性能
+  setInterval(applyToSelects, 2000);
 
   // 3. 使用 MutationObserver 监听新添加的 select 元素和属性变化
   const observer = new MutationObserver((mutations) => {
@@ -181,12 +179,10 @@ export const applyFontSelectStyles = () => {
           if (node.nodeType === 1) { // Element node
             if (node.tagName === 'SELECT') {
               needsUpdate = true;
-              console.log('🆕 检测到新的 select 元素');
             } else if (node.querySelectorAll) {
               const selects = node.querySelectorAll('select');
               if (selects.length > 0) {
                 needsUpdate = true;
-                console.log(`🆕 检测到 ${selects.length} 个新的 select 元素`);
               }
             }
           }
@@ -197,7 +193,6 @@ export const applyFontSelectStyles = () => {
       if (mutation.type === 'attributes' && mutation.target.tagName === 'SELECT') {
         if (mutation.attributeName === 'style' || mutation.attributeName === 'class') {
           needsUpdate = true;
-          console.log('🔄 检测到 select 样式被修改，重新应用');
         }
       }
     });
@@ -225,17 +220,14 @@ export const applyFontSelectStyles = () => {
     selects.forEach(select => {
       if (!select.dataset.listenerAdded) {
         select.addEventListener('focus', () => {
-          console.log('🎯 Select 获得焦点，立即应用样式');
           applyToSelects();
           setTimeout(applyToSelects, 10);
         });
         select.addEventListener('click', () => {
-          console.log('🎯 Select 被点击，立即应用样式');
           applyToSelects();
           setTimeout(applyToSelects, 10);
         });
         select.addEventListener('mousedown', () => {
-          console.log('🎯 Select mousedown，立即应用样式');
           applyToSelects();
           setTimeout(applyToSelects, 10);
         });
@@ -246,8 +238,8 @@ export const applyFontSelectStyles = () => {
 
   // 立即添加监听器
   addSelectListeners();
-  // 定期检查并添加监听器到新的 select 元素
-  setInterval(addSelectListeners, 1000);
+  // 定期检查并添加监听器到新的 select 元素（减少频率）
+  setInterval(addSelectListeners, 3000);
 
   console.log('✅ 字体选择器样式修复已启动');
 

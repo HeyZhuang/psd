@@ -20,6 +20,11 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3002,
     strictPort: true, // 强制使用 3002，不自动切换端口
+    hmr: {
+      protocol: 'ws',
+      host: '54.189.143.120', // 使用外网 IP 以支持远程访问
+      port: 3002,
+    },
   },
 
   build: {

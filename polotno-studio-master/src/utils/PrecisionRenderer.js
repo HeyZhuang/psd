@@ -264,7 +264,7 @@ export class PrecisionRenderer {
       if (this.store?.activePage?.children) {
         this.applyPrecisionStyles();
       }
-    }, 2000); // 每2秒检查一次
+    }, 5000); // 每5秒检查一次（优化性能）
   }
 
   // 强制重新渲染所有精确元素

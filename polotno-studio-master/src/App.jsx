@@ -26,9 +26,9 @@ import { StableDiffusionSection } from './sections/stable-diffusion-section';
 import { MyDesignsSection } from './sections/my-designs-section';
 import { LayersSection } from './sections/layers-section';
 import { UploadSection } from './sections/upload-section';
-import { UserTemplatesSection } from './sections/user-templates-section';
 import { ResizeSection } from './sections/resize-section';
 import { MyElementsSection } from './sections/my-elements-section';
+import { MyTemplatesSection } from './sections/my-templates-section';
 
 import { useProject } from './project';
 import { saveElement } from './utils/my-elements-manager';
@@ -63,10 +63,10 @@ DEFAULT_SECTIONS.length = 0;
 DEFAULT_SECTIONS.push(MyDesignsSection);
 // 2. My Elements (我的元素)
 DEFAULT_SECTIONS.push(MyElementsSection);
-// 3. Upload (上传)
+// 3. My Templates (我的模板)
+DEFAULT_SECTIONS.push(MyTemplatesSection);
+// 4. Upload (上传)
 DEFAULT_SECTIONS.push(UploadSection);
-// 4. Templates (模板)
-DEFAULT_SECTIONS.push(UserTemplatesSection);
 // 5. Text (文字) - 使用Polotno SDK原生TextSection (包含我的字体功能)
 DEFAULT_SECTIONS.push(TextSection);
 // 6. Photos (图片)
@@ -127,8 +127,7 @@ const App = observer(({ store }) => {
   const [isLayersPanelOpen, setIsLayersPanelOpen] = React.useState(true);
   const [rightPanelWidth, setRightPanelWidth] = React.useState(320);
 
-  // 使用 ref 避免不必要的重渲染
-  const workspaceWrapRef = React.useRef(null);
+  // 移除未使用的 workspaceWrapRef
   const resizeTimeoutRef = React.useRef(null);
 
   // 监听右侧面板宽度变化，动态调整画布
@@ -377,9 +376,7 @@ const App = observer(({ store }) => {
           <SidePanelWrap>
             <SidePanel store={store} sections={DEFAULT_SECTIONS} />
           </SidePanelWrap>
-          <WorkspaceWrap
-            ref={workspaceWrapRef}
-          >
+          <WorkspaceWrap>
             <MemoizedToolbar store={store} />
             <MemoizedWorkspace store={store} />
             <MemoizedZoomButtons store={store} />

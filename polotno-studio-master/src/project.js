@@ -44,7 +44,7 @@ class Project {
       mobx.runInAction(() => {
         this.cloudEnabled = window.puter?.auth?.isSignedIn() || false;
       });
-    }, 100);
+    }, 2000); // 优化：从100ms改为2000ms，减少性能开销
   }
 
   setLanguage(lang) {

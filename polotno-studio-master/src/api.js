@@ -127,7 +127,6 @@ export async function loadById({ id }) {
 }
 
 export async function saveDesign({ storeJSON, preview, name, id }) {
-  console.log('saving');
   if (!id) {
     id = nanoid(10);
   }
@@ -136,7 +135,6 @@ export async function saveDesign({ storeJSON, preview, name, id }) {
   const storePath = `designs/${id}.json`;
 
   await writeFile(previewPath, preview);
-  console.log('preview saved');
   await writeFile(storePath, JSON.stringify(storeJSON));
 
   let list = await listDesigns();

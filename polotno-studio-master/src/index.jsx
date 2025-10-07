@@ -9,7 +9,6 @@ import '@blueprintjs/core/lib/css/blueprint.css';
 import './index.css';
 import './styles/psd-precision.css';
 import './styles/font-select-override.css';
-import './styles/force-black-option.css';
 import App from './App';
 import './logger';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -41,9 +40,9 @@ const store = createStore({
   ...(isDevelopment && { disableDomainCheck: true })
 });
 
-// 完全清空默认字体
-store.fonts.clear();
-console.log('🔥 已清空所有默认字体');
+// 注意：不能直接清空 store.fonts，因为它受 MobX State Tree 保护
+// 自定义字体会追加到默认字体列表中
+console.log('📝 准备加载自定义字体（将追加到默认字体列表）');
 
 window.store = store;
 store.addPage();
@@ -72,7 +71,7 @@ customFonts.forEach(font => {
   }
 });
 
-console.log(`📝 已加载 ${customFonts.length} 个自定义字体，禁用了 Polotno 默认字体`);
+console.log(`📝 已加载 ${customFonts.length} 个自定义字体`);
 
 // 验证字体列表
 setTimeout(() => {

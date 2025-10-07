@@ -8,7 +8,12 @@ Polotno Studio PSD Enhanced Editor - A professional design editor built on the P
 
 ## Development Commands
 
+**Important**: All commands must be run from the `polotno-studio-master/` subdirectory, not the repository root.
+
 ```bash
+# Navigate to working directory
+cd polotno-studio-master
+
 # Install dependencies
 npm install
 
@@ -20,6 +25,12 @@ npm run build
 ```
 
 The development server runs on `http://localhost:3002` (port configured in vite.config.js).
+
+### Repository Structure
+
+The repository has a unique structure where the actual application code is in a subdirectory:
+- `/polotno-studio-psd-main/` - Repository root (contains CLAUDE.md)
+- `/polotno-studio-psd-main/polotno-studio-master/` - **Working directory** (contains src/, package.json, etc.)
 
 ## Core Architecture
 
@@ -58,15 +69,14 @@ The PSD import system is the core feature of this application:
 
 The section order is explicitly configured in `App.jsx`:
 1. My Designs (`sections/my-designs-section.jsx`)
-2. Upload (`sections/upload-section.jsx`) - PSD import entry point with text layer detection
-3. Templates (`sections/user-templates-section.jsx`) - Template management with preview generation
-4. Text (`sections/text-section.jsx`) - Polotno native text section
-5. My Fonts (`sections/fonts-section.jsx`) - Custom font upload and management
-6. Photos (Polotno default)
-7. Shapes (`sections/shapes-section.jsx`)
-8. Resize (`sections/resize-section.jsx`)
+2. My Elements (`sections/my-elements-section.jsx`) - Custom element library with right-click save
+3. Upload (`sections/upload-section.jsx`) - PSD import entry point with text layer detection
+4. Text (Polotno default TextSection) - Native text section with font management
+5. Photos (Polotno default)
+6. Shapes (`sections/shapes-section.jsx`)
+7. Resize (`sections/resize-section.jsx`)
 
-Note: Videos section is explicitly excluded.
+Note: Videos and UserTemplates sections are explicitly excluded.
 
 ### State Management
 
@@ -75,11 +85,24 @@ Note: Videos section is explicitly excluded.
 - **MobX**: Used for reactive state management with observer pattern
 - **Local Storage**: Used for persisting user templates and assets via `storage.js`
 
-### Template System
+### Layout System
 
-- `utils/template-manager.js`: Handles template CRUD operations with metadata
-- Templates include preview generation, thumbnail creation, and custom metadata
-- Integration with cloud storage via `api.js`
+- **Left Panel**: Side panel with tool sections (My Designs, Upload, Text, Photos, etc.)
+- **Center**: Main workspace canvas with toolbar, zoom controls, and pages timeline
+- **Right Panel**: `RightLayersPanel` component provides collapsible layer management
+  - Toggles between 320px (open) and 50px (collapsed)
+  - Window resize events are dispatched during transitions to ensure Polotno recalculates canvas size
+  - Multiple resize triggers at intervals (50ms, 100ms, 150ms, 200ms, 250ms, 300ms, 350ms) ensure smooth transitions
+
+
+### My Elements System
+
+- `utils/my-elements-manager.js`: Manages user's custom element library
+- Right-click context menu on any element to "Save to My Elements"
+- Elements stored in localStorage with preview thumbnails
+- Supports all element types with full property preservation
+- Drag-and-drop from My Elements panel to canvas
+- Maximum 100 elements stored (FIFO overflow)
 
 ## Key Technical Details
 
@@ -132,13 +155,35 @@ Internationalization configured via `setTranslations()` with support for:
 - English (en), French (fr), Indonesian (id), Russian (ru), Portuguese (pt-br), Chinese (zh-ch)
 - Translation files in `translations/` directory
 
-### Working Directory
-
-All source code is in `polotno-studio-master/` subdirectory, not the repository root.
-
 ## Debugging Features
 
 - **Ctrl+Shift+D**: Toggle debug mode to see detailed PSD conversion logs
 - **Ctrl/Cmd+K**: Enable PSD comparison tool (overlay original vs. rendered)
 - **Double-click or Enter**: Edit PSD text elements
 - Console logging for PSD parsing, font loading, and precision rendering
+
+## Performance Optimization Notes
+
+### Critical Performance Considerations
+
+The codebase uses several periodic timers and observers that can impact performance. When making changes:
+
+1. **Avoid Frequent setInterval**: Multiple files use `setInterval` for polling. These have been optimized to run at reasonable intervals:
+   - `project.js`: Cloud state check (2000ms)
+   - `font-select-fixer.js`: Font style application (2000ms and 3000ms)
+   - `PrecisionRenderer.js`: Element change polling (5000ms)
+   - `PolotnoTextRenderer.js`: Text enhancement (3000ms and 5000ms)
+
+2. **Use MobX Reactions Instead of Polling**: When monitoring Polotno store changes, prefer MobX `autorun` or `reaction` over `setInterval`. Example: `PSDTextManager.js` uses `autorun` to watch `selectedElements`.
+
+3. **Throttle MutationObservers**: DOM observers should use throttling/debouncing to prevent excessive callbacks. See `force-option-black.js` for an example with 200ms throttling.
+
+4. **Avoid Heavy Operations on Panel Mount**: Loading data or making network requests when panels open can cause UI freezes. Always load from local cache first, then sync in background if needed.
+
+5. **Context-Specific Observers**: Limit MutationObserver scope to specific containers (e.g., `.polotno-panel-container`) rather than `document.body` to reduce callback frequency.
+
+### Common Performance Issues
+
+- **Network Requests on Mount**: Avoid automatic cloud sync when components mount. Let users trigger sync manually.
+- **Excessive Console Logging**: Remove or disable verbose console logs in production code, especially in loops or frequent callbacks.
+- **Global CSS Selectors**: Be specific with CSS selectors (use class names) to avoid affecting entire application.

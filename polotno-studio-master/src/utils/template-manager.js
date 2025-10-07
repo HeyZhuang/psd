@@ -62,22 +62,12 @@ export class TemplateManager {
     }
   }
 
-  // 获取所有模板（本地+云端同步）
+  // 获取所有模板（仅从本地缓存加载，不自动同步云端）
   static async getAllTemplates() {
     try {
-      // 首先获取本地模板
+      // 只获取本地缓存的模板，不自动同步云端
+      // 用户需要手动点击"同步"按钮来同步云端模板
       let templates = await this.getLocalTemplates();
-      
-      // 如果云端可用，尝试同步
-      if (window.puter?.auth?.isSignedIn()) {
-        try {
-          const cloudTemplates = await this.syncCloudTemplates();
-          return cloudTemplates;
-        } catch (syncError) {
-          console.warn('云端同步失败，使用本地模板:', syncError);
-        }
-      }
-      
       return templates;
     } catch (error) {
       console.error('获取模板失败:', error);

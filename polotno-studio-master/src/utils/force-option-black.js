@@ -4,8 +4,6 @@
  */
 
 export const forceOptionBlack = () => {
-  console.log('%c🔨 强制 option 黑色文字工具启动', 'background: #dc3545; color: white; padding: 8px; font-weight: bold;');
-
   const forceBlackStyle = () => {
     // 获取所有 option 元素
     const allOptions = document.querySelectorAll('option');
@@ -13,8 +11,6 @@ export const forceOptionBlack = () => {
     if (allOptions.length === 0) {
       return;
     }
-
-    console.log(`🔍 找到 ${allOptions.length} 个 option 元素，正在强制应用黑色样式...`);
 
     allOptions.forEach((option, index) => {
       // 完全移除内联样式
@@ -54,90 +50,49 @@ export const forceOptionBlack = () => {
       option.style.setProperty('background', '#ffffff', 'important');
       option.style.setProperty('font-family', 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', 'important');
       option.style.setProperty('font-weight', '700', 'important');
-
-      if (index < 5) {
-        console.log(`  ✅ Option #${index + 1}: "${option.textContent.trim().substring(0, 20)}..." - 强制黑色`);
-      }
     });
-
-    console.log(`✅ 已强制应用黑色样式到所有 ${allOptions.length} 个 option 元素`);
   };
 
   // 立即执行
   forceBlackStyle();
 
-  // 延迟执行多次，确保覆盖动态加载的内容
+  // 延迟执行几次，确保覆盖动态加载的内容
   setTimeout(forceBlackStyle, 100);
-  setTimeout(forceBlackStyle, 300);
   setTimeout(forceBlackStyle, 500);
   setTimeout(forceBlackStyle, 1000);
-  setTimeout(forceBlackStyle, 2000);
-  setTimeout(forceBlackStyle, 3000);
 
-  // 每 300ms 持续强制应用
-  setInterval(forceBlackStyle, 300);
+  // 监听 select 元素的变化（使用节流）
+  let observerTimeout = null;
+  const observer = new MutationObserver(() => {
+    if (observerTimeout) return;
 
-  // 监听 DOM 变化
-  const observer = new MutationObserver((mutations) => {
-    let hasOptionChanges = false;
-
-    mutations.forEach(mutation => {
-      if (mutation.type === 'childList') {
-        mutation.addedNodes.forEach(node => {
-          if (node.nodeType === 1) {
-            if (node.tagName === 'OPTION' || node.tagName === 'SELECT') {
-              hasOptionChanges = true;
-            } else if (node.querySelectorAll) {
-              const options = node.querySelectorAll('option');
-              if (options.length > 0) {
-                hasOptionChanges = true;
-              }
-            }
-          }
-        });
-      }
-
-      // 监听 option 元素的属性变化
-      if (mutation.type === 'attributes' && mutation.target.tagName === 'OPTION') {
-        hasOptionChanges = true;
-      }
-    });
-
-    if (hasOptionChanges) {
-      console.log('🔄 检测到 option 元素变化，立即重新应用样式');
+    observerTimeout = setTimeout(() => {
       forceBlackStyle();
-      setTimeout(forceBlackStyle, 50);
-      setTimeout(forceBlackStyle, 100);
-    }
+      observerTimeout = null;
+    }, 200);
   });
 
-  observer.observe(document.body, {
+  // 只监听特定的侧边栏容器，而不是整个 body
+  const targetNode = document.querySelector('.polotno-panel-container') || document.body;
+  observer.observe(targetNode, {
     childList: true,
     subtree: true,
-    attributes: true,
-    attributeFilter: ['style', 'class']
+    attributes: false  // 禁用属性监听以提高性能
   });
 
-  // 监听所有 select 的焦点和点击事件
+  // 监听 select 的焦点事件（优化后只执行一次）
   document.addEventListener('focus', (e) => {
     if (e.target.tagName === 'SELECT') {
-      console.log('🎯 Select 获得焦点，强制应用样式');
       forceBlackStyle();
-      setTimeout(forceBlackStyle, 10);
       setTimeout(forceBlackStyle, 50);
     }
   }, true);
 
   document.addEventListener('click', (e) => {
     if (e.target.tagName === 'SELECT' || e.target.closest('select')) {
-      console.log('🎯 Select 被点击，强制应用样式');
       forceBlackStyle();
-      setTimeout(forceBlackStyle, 10);
-      setTimeout(forceBlackStyle, 50);
     }
   }, true);
-
-  console.log('✅ 强制 option 黑色文字工具已启动并持续监控');
 
   return () => {
     observer.disconnect();

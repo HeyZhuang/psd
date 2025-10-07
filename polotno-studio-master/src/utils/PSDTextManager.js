@@ -91,9 +91,16 @@ class PSDTextManager {
       }
     };
 
-    // 使用定时检查方式监听选择变化（更稳定）
-    setInterval(checkSelectedElement, 200);
-    
+    // 使用MobX的autorun来监听选择变化（性能更好）
+    if (this.store.selectedElements) {
+      const { autorun } = require('mobx');
+      autorun(() => {
+        // 访问selectedElements触发MobX的依赖追踪
+        const selected = this.store.selectedElements.slice();
+        checkSelectedElement();
+      });
+    }
+
     console.log('元素观察器已设置');
   }
 
