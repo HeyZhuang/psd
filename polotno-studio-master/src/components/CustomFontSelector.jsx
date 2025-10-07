@@ -59,80 +59,59 @@ export const CustomFontSelector = observer(({ store }) => {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      padding: '0 8px',
-    }}>
-      <label style={{
+    <select
+      value={currentFont}
+      onChange={handleFontChange}
+      className="polotno-toolbar-select custom-font-select"
+      style={{
+        padding: '6px 28px 6px 10px',
         fontSize: '13px',
-        fontWeight: '500',
-        color: '#374151',
-        whiteSpace: 'nowrap',
-      }}>
-        字体:
-      </label>
-      <select
-        value={currentFont}
-        onChange={handleFontChange}
-        style={{
-          padding: '6px 32px 6px 12px',
-          fontSize: '14px',
-          fontWeight: '500',
-          color: '#000000',
-          backgroundColor: '#ffffff',
-          border: '2px solid #d1d5db',
-          borderRadius: '6px',
-          cursor: 'pointer',
-          outline: 'none',
-          minWidth: '180px',
-          maxWidth: '250px',
-          appearance: 'none',
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 10px center',
-          transition: 'all 0.2s ease',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = '#1764EA';
-          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(23, 100, 234, 0.1)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = '#d1d5db';
-          e.currentTarget.style.boxShadow = 'none';
-        }}
-        onFocus={(e) => {
-          e.currentTarget.style.borderColor = '#1764EA';
-          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(23, 100, 234, 0.1)';
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.borderColor = '#d1d5db';
-          e.currentTarget.style.boxShadow = 'none';
-        }}
-      >
-        {customFonts.map((font) => (
-          <option
-            key={font.id}
-            value={font.family}
-            style={{
-              fontFamily: font.family,
-              padding: '8px 12px',
-              fontSize: '14px',
-              fontWeight: '500',
-            }}
-          >
-            {font.name}
-          </option>
-        ))}
-      </select>
-      <div style={{
-        fontSize: '11px',
-        color: '#6b7280',
-        whiteSpace: 'nowrap',
-      }}>
-        ({customFonts.length} 个字体)
-      </div>
-    </div>
+        fontWeight: '600',
+        color: '#000000',
+        backgroundColor: '#ffffff',
+        border: '2px solid #cccccc',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        outline: 'none',
+        minWidth: '140px',
+        maxWidth: '200px',
+        appearance: 'none',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23000000' d='M5 7L1 3h8z'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'right 8px center',
+        transition: 'all 0.15s ease',
+        height: '32px',
+        lineHeight: '1',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = '#1764EA';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = '#cccccc';
+      }}
+      onFocus={(e) => {
+        e.currentTarget.style.borderColor = '#1764EA';
+        e.currentTarget.style.boxShadow = '0 0 0 2px rgba(23, 100, 234, 0.1)';
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.borderColor = '#cccccc';
+        e.currentTarget.style.boxShadow = 'none';
+      }}
+    >
+      {customFonts.map((font) => (
+        <option
+          key={font.id}
+          value={font.family}
+          style={{
+            fontFamily: font.family,
+            padding: '8px',
+            fontSize: '13px',
+            fontWeight: '600',
+          }}
+        >
+          {font.name}
+        </option>
+      ))}
+    </select>
   );
 });
