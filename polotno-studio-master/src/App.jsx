@@ -29,10 +29,12 @@ import { UploadSection } from './sections/upload-section';
 import { ResizeSection } from './sections/resize-section';
 import { MyElementsSection } from './sections/my-elements-section';
 import { MyTemplatesSection } from './sections/my-templates-section';
+import { MyFontsSection } from './sections/my-fonts-section';
 
 import { useProject } from './project';
 import { saveElement } from './utils/my-elements-manager';
 import { applyFontSelectStyles } from './utils/font-select-fixer';
+import { initializeCustomFonts } from './utils/my-fonts-manager';
 
 import fr from './translations/fr';
 import en from './translations/en';
@@ -67,13 +69,15 @@ DEFAULT_SECTIONS.push(MyElementsSection);
 DEFAULT_SECTIONS.push(MyTemplatesSection);
 // 4. Upload (上传)
 DEFAULT_SECTIONS.push(UploadSection);
-// 5. Text (文字) - 使用Polotno SDK原生TextSection (包含我的字体功能)
+// 5. Text (文字) - 使用Polotno SDK原生TextSection
 DEFAULT_SECTIONS.push(TextSection);
-// 6. Photos (图片)
+// 6. My Fonts (我的字体) - 自定义字体库管理
+DEFAULT_SECTIONS.push(MyFontsSection);
+// 7. Photos (图片)
 DEFAULT_SECTIONS.push(PhotosSection);
-// 7. Shapes (形状)
+// 8. Shapes (形状)
 DEFAULT_SECTIONS.push(ShapesSection);
-// 8. Resize (尺寸调整)
+// 9. Resize (尺寸调整)
 DEFAULT_SECTIONS.push(ResizeSection);
 
 // 注意：明确不添加 VideosSection，确保视频按钮不显示
@@ -193,6 +197,11 @@ const App = observer(({ store }) => {
   React.useEffect(() => {
     // 加载项目（字体已经在 index.jsx 中预加载）
     project.firstLoad();
+
+    // 初始化自定义字体系统 - 注册已保存的字体
+    initializeCustomFonts().then(() => {
+      console.log('✅ 自定义字体系统初始化完成');
+    });
 
     // 延迟应用字体选择器样式修复，确保 Polotno 完全渲染
     let cleanupFontStyles;
