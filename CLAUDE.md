@@ -274,6 +274,104 @@ The codebase uses several periodic timers and observers that can impact performa
 
 ### CSS Architecture
 
-- `index.css`: Main application styles (53KB)
+**Modern Design System** (Added 2025-01-08):
+- `styles/design-tokens.css`: Design tokens system (colors, spacing, typography, shadows, transitions)
+- `styles/modern-ui.css`: Modern UI components (topbar, toolbar, buttons, inputs, cards)
+- `styles/enhanced-sidepanel.css`: Canva-style side panel with card grids and modern search
+- `styles/animations.css`: Smooth animations and micro-interactions (fade, slide, scale, bounce)
+
+**Legacy Styles**:
+- `index.css`: Main application styles (53KB) - includes global resets and base styles
 - `styles/psd-precision.css`: Injected CSS for precise text effects rendering
 - `styles/font-select-override.css`: Font selector styling customizations
+- `styles/force-black-option.css`: Color enforcement for select options
+
+**IMPORTANT - CSS Import Order** (in `index.jsx`):
+```javascript
+import '@blueprintjs/core/lib/css/blueprint.css';   // 1. Blueprint base
+import './styles/design-tokens.css';                 // 2. Design tokens (variables)
+import './styles/modern-ui.css';                     // 3. Modern UI components
+import './styles/enhanced-sidepanel.css';            // 4. Side panel enhancements
+import './styles/animations.css';                    // 5. Animations
+import './index.css';                                // 6. Application styles
+import './styles/psd-precision.css';                 // 7. PSD precision
+import './styles/font-select-override.css';          // 8. Font overrides
+```
+This order is critical: design tokens must load first, then UI components that use those tokens, then app-specific overrides.
+
+### Modern UI Design System
+
+The application now uses a comprehensive design system that combines Figma's precision with Canva's simplicity:
+
+**Design Philosophy**: "比 Canva 更轻量，比普通编辑工具更专业" (More lightweight than Canva, more professional than ordinary editing tools)
+
+**Key Features**:
+- **Design Tokens**: 100+ CSS custom properties for colors, spacing, typography, shadows
+- **8px Grid System**: All spacing aligned to 8px grid for consistency
+- **Color System**: Professional blue (#3276FF) primary + 10-level neutral grays
+- **Typography**: Inter font family with modular scale (11px - 32px)
+- **Shadows**: 4-level elevation system for depth and hierarchy
+- **Animations**: 60fps GPU-accelerated animations with prefers-reduced-motion support
+
+**Component Updates**:
+- **Topbar**: 56px height, Figma-inspired with logo and project name editor
+- **Side Panel**: 280px width, Canva-style card grids with hover effects
+- **Toolbar**: 48px compact height with contextual controls
+- **Layer Panel**: Collapsible 280px ↔ 48px with smooth transitions
+- **Buttons**: Rounded corners, hover states, click bounce animations
+- **Cards**: Grid layout, hover lift effect, shadow transitions
+
+**Reference Documentation**:
+- Full design system: `polotno-studio-master/DESIGN_SYSTEM.md`
+- UI improvements: `polotno-studio-master/UI_IMPROVEMENTS.md`
+- Quick start guide: `polotno-studio-master/QUICK_START.md`
+
+## Deployment
+
+### Production Deployment
+
+The application is currently deployed on port 3002. See `polotno-studio-master/DEPLOYMENT_INFO.md` for details.
+
+**Quick Deployment**:
+```bash
+cd polotno-studio-master
+
+# Build for production
+npm run build
+
+# Serve on port 3002 (background)
+nohup npx serve -s dist -l 3002 > /tmp/psd-studio-3002.log 2>&1 &
+
+# Check status
+lsof -i :3002
+tail -f /tmp/psd-studio-3002.log
+```
+
+**Server Configuration**:
+- Port: 3002 (configured in vite.config.js)
+- Host: 0.0.0.0 (listens on all interfaces)
+- Static files served from: `dist/` directory
+- Logs: `/tmp/psd-studio-3002.log`
+
+**Restarting Service**:
+```bash
+# Stop existing service
+sudo fuser -k 3002/tcp
+
+# Start new service
+cd polotno-studio-master
+nohup npx serve -s dist -l 3002 > /tmp/psd-studio-3002.log 2>&1 &
+```
+
+### Development vs Production
+
+- **Development** (`npm start`): Vite dev server with HMR, runs on 0.0.0.0:3002
+- **Production** (`npm run build` + serve): Optimized build served via static file server
+
+### Build Output
+
+Production build generates:
+- Total size: ~3.60 MB (gzip: ~1.34 MB)
+- Main CSS: ~383 KB (gzip: ~47 KB)
+- Output directory: `dist/`
+- Build time: ~20-25 seconds
