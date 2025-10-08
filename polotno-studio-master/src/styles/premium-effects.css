@@ -1,0 +1,562 @@
+/**
+ * 🌟 Premium Visual Effects - Commercial Grade
+ * Advanced visual effects for professional design tools
+ */
+
+/* ========================================
+   ✨ Glassmorphism Effects
+   ======================================== */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.glass-panel-dark {
+  background: rgba(30, 30, 30, 0.7);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 200ms ease;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   🎨 Premium Gradients
+   ======================================== */
+
+.gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.gradient-premium {
+  background: linear-gradient(135deg, #3276FF 0%, #1764EA 50%, #0D4FC2 100%);
+}
+
+.gradient-sunset {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.gradient-ocean {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.gradient-mesh {
+  background:
+    radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(50, 118, 255, 0.1) 0%, transparent 50%);
+}
+
+/* Animated Gradients */
+.gradient-animated {
+  background: linear-gradient(
+    -45deg,
+    #667eea,
+    #764ba2,
+    #f093fb,
+    #f5576c
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ========================================
+   💫 Glow Effects
+   ======================================== */
+
+.glow-primary {
+  box-shadow: 0 0 20px rgba(50, 118, 255, 0.4),
+              0 0 40px rgba(50, 118, 255, 0.2);
+}
+
+.glow-success {
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.4),
+              0 0 40px rgba(76, 175, 80, 0.2);
+}
+
+.glow-hover {
+  transition: box-shadow 300ms ease;
+}
+
+.glow-hover:hover {
+  box-shadow: 0 0 30px rgba(50, 118, 255, 0.5),
+              0 0 60px rgba(50, 118, 255, 0.3),
+              0 0 90px rgba(50, 118, 255, 0.1);
+}
+
+.glow-text {
+  text-shadow: 0 0 10px rgba(50, 118, 255, 0.5),
+               0 0 20px rgba(50, 118, 255, 0.3);
+}
+
+/* Pulsing Glow */
+.glow-pulse {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(50, 118, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(50, 118, 255, 0.6),
+                0 0 60px rgba(50, 118, 255, 0.4);
+  }
+}
+
+/* ========================================
+   🌊 Liquid/Morphing Effects
+   ======================================== */
+
+.morph-blob {
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  animation: morphBlob 8s ease-in-out infinite;
+}
+
+@keyframes morphBlob {
+  0%, 100% {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+  25% {
+    border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+  }
+  50% {
+    border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+  }
+  75% {
+    border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+  }
+}
+
+/* ========================================
+   ⚡ Premium Shadows
+   ======================================== */
+
+.shadow-premium {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.03),
+    0 4px 8px rgba(0, 0, 0, 0.04),
+    0 8px 16px rgba(0, 0, 0, 0.05),
+    0 16px 32px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-floating {
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.08),
+    0 24px 48px rgba(0, 0, 0, 0.06);
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.shadow-inner-glow {
+  box-shadow:
+    inset 0 0 20px rgba(50, 118, 255, 0.1),
+    inset 0 0 40px rgba(50, 118, 255, 0.05);
+}
+
+/* Neumorphism */
+.neomorphic {
+  background: #f0f0f0;
+  box-shadow:
+    8px 8px 16px rgba(163, 177, 198, 0.6),
+    -8px -8px 16px rgba(255, 255, 255, 0.5);
+}
+
+.neomorphic-inset {
+  background: #f0f0f0;
+  box-shadow:
+    inset 8px 8px 16px rgba(163, 177, 198, 0.6),
+    inset -8px -8px 16px rgba(255, 255, 255, 0.5);
+}
+
+/* ========================================
+   🎯 Interactive Highlights
+   ======================================== */
+
+.highlight-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.highlight-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3276FF, transparent);
+  animation: highlightScan 2s linear infinite;
+}
+
+@keyframes highlightScan {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmerSlide 2s infinite;
+}
+
+@keyframes shimmerSlide {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* ========================================
+   🌈 Color Overlays
+   ======================================== */
+
+.overlay-gradient {
+  position: relative;
+}
+
+.overlay-gradient::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(50, 118, 255, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.overlay-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay-shine::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
+  transform: scale(0);
+  transition: transform 600ms ease;
+}
+
+.overlay-shine:hover::before {
+  transform: scale(1);
+}
+
+/* ========================================
+   ✨ Particle Effects (CSS only)
+   ======================================== */
+
+.particles-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.particles-bg::before,
+.particles-bg::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  animation: particleFloat 20s ease-in-out infinite;
+}
+
+.particles-bg::before {
+  top: -100px;
+  left: -100px;
+  background: radial-gradient(circle, #3276FF, transparent);
+  animation-delay: 0s;
+}
+
+.particles-bg::after {
+  bottom: -100px;
+  right: -100px;
+  background: radial-gradient(circle, #764ba2, transparent);
+  animation-delay: 5s;
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(50px, -50px);
+  }
+  50% {
+    transform: translate(100px, 0);
+  }
+  75% {
+    transform: translate(50px, 50px);
+  }
+}
+
+/* ========================================
+   🎭 Premium Loading States
+   ======================================== */
+
+.skeleton-premium {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #e8e8e8 20%,
+    #e8e8e8 40%,
+    #f0f0f0 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShine 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonShine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.loading-dots {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3276FF;
+  animation: dotBounce 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   🎪 Premium Transitions
+   ======================================== */
+
+.transition-premium {
+  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-bounce {
+  transition: all 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.transition-smooth {
+  transition: all 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ========================================
+   🏆 Premium Badges
+   ======================================== */
+
+.badge-premium {
+  position: relative;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.badge-premium::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  filter: blur(8px);
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.badge-new {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ========================================
+   🎨 Premium Cards
+   ======================================== */
+
+.card-premium {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.03),
+    0 8px 16px rgba(0, 0, 0, 0.04),
+    0 16px 32px rgba(0, 0, 0, 0.05);
+  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card-premium:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 12px rgba(0, 0, 0, 0.04),
+    0 16px 24px rgba(0, 0, 0, 0.05),
+    0 24px 48px rgba(0, 0, 0, 0.06);
+}
+
+.card-premium-glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* ========================================
+   🌟 Premium Buttons
+   ======================================== */
+
+.btn-premium {
+  position: relative;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #3276FF 0%, #1764EA 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 300ms ease;
+  box-shadow: 0 4px 12px rgba(50, 118, 255, 0.3);
+}
+
+.btn-premium::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 600ms, height 600ms;
+}
+
+.btn-premium:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(50, 118, 255, 0.4);
+}
+
+.btn-premium:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   💎 Utility Classes
+   ======================================== */
+
+.blur-sm { filter: blur(4px); }
+.blur-md { filter: blur(8px); }
+.blur-lg { filter: blur(16px); }
+
+.brightness-high { filter: brightness(1.2); }
+.brightness-low { filter: brightness(0.8); }
+
+.saturate-high { filter: saturate(1.5); }
+.saturate-low { filter: saturate(0.5); }
+
+.backdrop-blur { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.backdrop-blur-lg { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }

@@ -33,10 +33,28 @@ const NavbarContainer = styled('div')`
   height: 56px;
   display: flex;
   align-items: center;
-  background: var(--topbar-bg, #ffffff);
-  border-bottom: 1px solid var(--topbar-border, #e5e5e5);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border-bottom: 1px solid rgba(229, 229, 229, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
   padding: 0 16px;
+  position: relative;
+  z-index: 100;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      rgba(50, 118, 255, 0.2) 0%,
+      rgba(50, 118, 255, 0) 50%,
+      rgba(118, 75, 162, 0.2) 100%
+    );
+  }
 
   @media screen and (max-width: 500px) {
     overflow-x: auto;

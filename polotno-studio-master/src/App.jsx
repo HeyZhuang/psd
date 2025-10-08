@@ -401,26 +401,42 @@ const App = observer(({ store }) => {
       </div>
       {project.status === 'loading' && (
         <div
+          className="glass-overlay"
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
             width: '100vw',
             height: '100vh',
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            background: 'rgba(250, 250, 250, 0.95)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <div
+            className="premium-card"
             style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              color: 'white',
+              background: 'white',
+              padding: '48px',
+              borderRadius: '16px',
+              boxShadow: '0 12px 48px rgba(0, 0, 0, 0.1)',
+              textAlign: 'center',
+              minWidth: '300px',
             }}
           >
             <Spinner />
+            <div style={{
+              marginTop: '24px',
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#424242'
+            }}>
+              Loading...
+            </div>
           </div>
         </div>
       )}

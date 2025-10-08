@@ -8,32 +8,66 @@ const PanelContainer = styled('div')`
   right: 0;
   top: 56px;
   bottom: 0;
-  background: var(--layer-panel-bg, #ffffff);
-  border-left: 1px solid var(--layer-panel-border, #e5e5e5);
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  border-left: 1px solid #e5e5e5;
   display: flex;
   flex-direction: column;
-  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.06);
-  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.04);
+  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
   z-index: var(--z-sticky, 1020);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg,
+      rgba(50, 118, 255, 0.6) 0%,
+      rgba(50, 118, 255, 0) 30%,
+      rgba(50, 118, 255, 0) 70%,
+      rgba(118, 75, 162, 0.6) 100%
+    );
+    opacity: 0.3;
+  }
 `;
 
 const PanelHeader = styled('div')`
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border-primary, #e5e5e5);
+  border-bottom: 1px solid #e5e5e5;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-primary, #ffffff);
+  background: white;
   min-height: 56px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      rgba(50, 118, 255, 0.3) 0%,
+      rgba(50, 118, 255, 0) 100%
+    );
+  }
 `;
 
 const PanelTitle = styled('h3')`
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary, #212121);
-  letter-spacing: 0.02em;
+  color: #616161;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const ToggleButton = styled('button')`
