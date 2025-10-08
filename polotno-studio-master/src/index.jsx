@@ -6,6 +6,10 @@ import { unstable_setAnimationsEnabled } from 'polotno/config';
 import { createProject, ProjectContext } from './project';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
+import './styles/design-tokens.css';
+import './styles/modern-ui.css';
+import './styles/enhanced-sidepanel.css';
+import './styles/animations.css';
 import './index.css';
 import './styles/psd-precision.css';
 import './styles/font-select-override.css';

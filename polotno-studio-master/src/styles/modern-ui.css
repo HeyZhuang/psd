@@ -1,0 +1,539 @@
+/**
+ * 🎨 Modern UI Styles
+ * Professional design system combining Figma precision + Canva simplicity
+ */
+
+/* Import Design Tokens */
+@import './design-tokens.css';
+
+/* Import Modern Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ========================================
+   🌐 Global Resets & Base Styles
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================
+   🎨 Topbar - Figma-inspired Clean Header
+   ======================================== */
+
+.topbar {
+  height: var(--topbar-height) !important;
+  background: var(--topbar-bg) !important;
+  border-bottom: var(--border-width-1) solid var(--topbar-border) !important;
+  box-shadow: var(--shadow-xs) !important;
+  padding: 0 var(--space-4) !important;
+  z-index: var(--z-sticky) !important;
+}
+
+.topbar .bp5-navbar-group {
+  height: var(--topbar-height) !important;
+  align-items: center !important;
+  gap: var(--space-2) !important;
+}
+
+/* Topbar Buttons - Minimal & Clean */
+.topbar .bp5-button {
+  height: 36px !important;
+  padding: 0 var(--space-3) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: var(--font-medium) !important;
+  border-radius: var(--radius-md) !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  transition: background var(--transition-base) var(--ease-out) !important;
+}
+
+.topbar .bp5-button:hover {
+  background: var(--state-hover-bg) !important;
+}
+
+.topbar .bp5-button:active {
+  background: var(--state-active-bg) !important;
+}
+
+.topbar .bp5-button.bp5-intent-primary {
+  background: var(--button-primary-bg) !important;
+  color: var(--text-inverse) !important;
+}
+
+.topbar .bp5-button.bp5-intent-primary:hover {
+  background: var(--button-primary-hover) !important;
+}
+
+/* Topbar Divider */
+.topbar .bp5-navbar-divider {
+  height: 24px !important;
+  margin: 0 var(--space-3) !important;
+  border-left: var(--border-width-1) solid var(--divider-color) !important;
+}
+
+/* Project Name Editor */
+.topbar .bp5-editable-text {
+  font-size: var(--text-base) !important;
+  font-weight: var(--font-semibold) !important;
+  color: var(--text-primary) !important;
+  max-width: 240px !important;
+}
+
+.topbar .bp5-editable-text:hover {
+  background: var(--state-hover-bg) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+/* ========================================
+   🎛️ Toolbar - Contextual Controls
+   ======================================== */
+
+.polotno-toolbar,
+.bp5-navbar.polotno-toolbar {
+  height: var(--toolbar-height) !important;
+  min-height: var(--toolbar-height) !important;
+  background: var(--toolbar-bg) !important;
+  border-bottom: var(--border-width-1) solid var(--toolbar-border) !important;
+  box-shadow: none !important;
+  padding: 0 var(--space-4) !important;
+}
+
+.polotno-toolbar .bp5-navbar-group {
+  height: var(--toolbar-height) !important;
+  align-items: center !important;
+  gap: var(--space-2) !important;
+}
+
+/* Toolbar Buttons - Compact & Professional */
+.polotno-toolbar .bp5-button,
+.bp5-navbar.polotno-toolbar .bp5-button {
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 var(--space-2) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: var(--font-medium) !important;
+  border-radius: var(--radius-md) !important;
+  border: var(--border-width-1) solid transparent !important;
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  transition: all var(--transition-base) var(--ease-out) !important;
+}
+
+.polotno-toolbar .bp5-button:hover,
+.bp5-navbar.polotno-toolbar .bp5-button:hover {
+  background: var(--state-hover-bg) !important;
+  border-color: var(--border-secondary) !important;
+}
+
+.polotno-toolbar .bp5-button:active,
+.polotno-toolbar .bp5-button.bp5-active {
+  background: var(--state-active-bg) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Toolbar Selects & Inputs */
+.polotno-toolbar select,
+.polotno-toolbar .bp5-select select,
+.polotno-toolbar input {
+  height: 32px !important;
+  padding: 0 var(--space-2) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: var(--font-medium) !important;
+  color: var(--text-primary) !important;
+  background: var(--input-bg) !important;
+  border: var(--border-width-1) solid var(--input-border) !important;
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition-base) var(--ease-out) !important;
+}
+
+.polotno-toolbar select:hover,
+.polotno-toolbar input:hover {
+  border-color: var(--input-border-hover) !important;
+}
+
+.polotno-toolbar select:focus,
+.polotno-toolbar input:focus {
+  outline: none !important;
+  border-color: var(--input-border-focus) !important;
+  box-shadow: var(--shadow-focus) !important;
+}
+
+.polotno-toolbar input::placeholder {
+  color: var(--input-placeholder) !important;
+}
+
+/* Toolbar Dividers */
+.polotno-toolbar .bp5-navbar-divider {
+  height: 20px !important;
+  margin: 0 var(--space-2) !important;
+  border-left: var(--border-width-1) solid var(--divider-color) !important;
+}
+
+/* ========================================
+   📋 Side Panel - Canva-style Component Cards
+   ======================================== */
+
+.polotno-side-panel-container {
+  width: var(--sidepanel-width) !important;
+  background: var(--sidepanel-bg) !important;
+  border-right: var(--border-width-1) solid var(--sidepanel-border) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Side Panel Tabs */
+.polotno-side-panel-tab {
+  padding: var(--space-3) var(--space-4) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: var(--font-medium) !important;
+  color: var(--text-secondary) !important;
+  border-bottom: var(--border-width-2) solid transparent !important;
+  transition: all var(--transition-base) var(--ease-out) !important;
+  cursor: pointer !important;
+}
+
+.polotno-side-panel-tab:hover {
+  color: var(--text-primary) !important;
+  background: var(--state-hover-bg) !important;
+}
+
+.polotno-side-panel-tab.polotno-side-panel-tab-active {
+  color: var(--primary-600) !important;
+  border-bottom-color: var(--primary-500) !important;
+  background: var(--bg-primary) !important;
+}
+
+/* Side Panel Content */
+.polotno-panel-container {
+  padding: var(--space-4) !important;
+  background: var(--bg-primary) !important;
+}
+
+/* Component Cards - Canva Style */
+.polotno-panel-container > * {
+  margin-bottom: var(--space-3) !important;
+}
+
+/* Template/Element Cards */
+.template-card,
+.element-card,
+.design-card {
+  background: var(--card-bg) !important;
+  border: var(--border-width-1) solid var(--card-border) !important;
+  border-radius: var(--card-radius) !important;
+  padding: var(--card-padding) !important;
+  box-shadow: var(--card-shadow) !important;
+  transition: all var(--transition-base) var(--ease-out) !important;
+  cursor: pointer !important;
+}
+
+.template-card:hover,
+.element-card:hover,
+.design-card:hover {
+  box-shadow: var(--card-hover-shadow) !important;
+  transform: translateY(-1px) !important;
+  border-color: var(--border-secondary) !important;
+}
+
+/* ========================================
+   🗂️ Layer Panel - Figma-inspired Hierarchy
+   ======================================== */
+
+.right-layers-panel {
+  width: var(--layer-panel-width) !important;
+  background: var(--layer-panel-bg) !important;
+  border-left: var(--border-width-1) solid var(--layer-panel-border) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.right-layers-panel.collapsed {
+  width: var(--layer-panel-collapsed-width) !important;
+}
+
+/* Layer Items */
+.layer-item {
+  padding: var(--space-2) var(--space-3) !important;
+  border-radius: var(--radius-md) !important;
+  margin-bottom: var(--space-1) !important;
+  transition: all var(--transition-base) var(--ease-out) !important;
+  cursor: pointer !important;
+}
+
+.layer-item:hover {
+  background: var(--state-hover-bg) !important;
+}
+
+.layer-item.selected {
+  background: var(--state-selected-bg) !important;
+  border: var(--border-width-1) solid var(--state-selected-border) !important;
+}
+
+.layer-item-icon {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: var(--space-2) !important;
+  color: var(--text-secondary) !important;
+}
+
+.layer-item-name {
+  font-size: var(--text-sm) !important;
+  font-weight: var(--font-medium) !important;
+  color: var(--text-primary) !important;
+  flex: 1 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* ========================================
+   ⚡ Smooth Animations & Micro-interactions
+   ======================================== */
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale In Animation */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Slide In from Right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Apply animations to panels */
+.polotno-panel-container {
+  animation: fadeIn var(--transition-base) var(--ease-out) !important;
+}
+
+.polotno-popover,
+.bp5-popover {
+  animation: scaleIn var(--transition-fast) var(--ease-out) !important;
+}
+
+/* ========================================
+   🎯 Icon Buttons - Compact & Clean
+   ======================================== */
+
+.icon-button {
+  width: var(--icon-button-size) !important;
+  height: var(--icon-button-size) !important;
+  min-width: var(--icon-button-size) !important;
+  min-height: var(--icon-button-size) !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--icon-button-radius) !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  cursor: pointer !important;
+  transition: all var(--transition-base) var(--ease-out) !important;
+}
+
+.icon-button:hover {
+  background: var(--icon-button-hover-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.icon-button:active {
+  background: var(--icon-button-active-bg) !important;
+}
+
+/* ========================================
+   🏷️ Badges & Labels
+   ======================================== */
+
+.badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: var(--badge-padding) !important;
+  font-size: var(--badge-font-size) !important;
+  font-weight: var(--font-semibold) !important;
+  border-radius: var(--badge-radius) !important;
+  background: var(--neutral-100) !important;
+  color: var(--text-primary) !important;
+}
+
+.badge.badge-primary {
+  background: var(--primary-100) !important;
+  color: var(--primary-700) !important;
+}
+
+.badge.badge-success {
+  background: var(--success-50) !important;
+  color: var(--success-700) !important;
+}
+
+.badge.badge-warning {
+  background: var(--warning-50) !important;
+  color: var(--warning-700) !important;
+}
+
+.badge.badge-error {
+  background: var(--error-50) !important;
+  color: var(--error-700) !important;
+}
+
+/* ========================================
+   📱 Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .polotno-side-panel-container {
+    width: 240px !important;
+  }
+
+  .right-layers-panel {
+    width: 240px !important;
+  }
+
+  .topbar .bp5-navbar-group {
+    gap: var(--space-1) !important;
+  }
+
+  .topbar .bp5-button {
+    padding: 0 var(--space-2) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    padding: 0 var(--space-2) !important;
+  }
+
+  .polotno-toolbar {
+    padding: 0 var(--space-2) !important;
+  }
+
+  .polotno-side-panel-container {
+    width: 200px !important;
+  }
+}
+
+/* ========================================
+   🎨 Scrollbar Styling - Modern & Subtle
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-100) !important;
+  border-radius: var(--radius-full) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neutral-400) !important;
+  border-radius: var(--radius-full) !important;
+  transition: background var(--transition-base) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-500) !important;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--neutral-400) var(--neutral-100) !important;
+}
+
+/* ========================================
+   🎭 Focus States - Accessible & Clear
+   ======================================== */
+
+*:focus-visible {
+  outline: none !important;
+  box-shadow: var(--shadow-focus) !important;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: var(--border-width-2) solid var(--primary-500) !important;
+  outline-offset: 2px !important;
+}
+
+/* ========================================
+   ✨ Utility Classes
+   ======================================== */
+
+.elevation-0 { box-shadow: none !important; }
+.elevation-1 { box-shadow: var(--shadow-sm) !important; }
+.elevation-2 { box-shadow: var(--shadow-md) !important; }
+.elevation-3 { box-shadow: var(--shadow-lg) !important; }
+.elevation-4 { box-shadow: var(--shadow-xl) !important; }
+
+.rounded-sm { border-radius: var(--radius-sm) !important; }
+.rounded-md { border-radius: var(--radius-md) !important; }
+.rounded-lg { border-radius: var(--radius-lg) !important; }
+.rounded-xl { border-radius: var(--radius-xl) !important; }
+.rounded-full { border-radius: var(--radius-full) !important; }
+
+.text-xs { font-size: var(--text-xs) !important; }
+.text-sm { font-size: var(--text-sm) !important; }
+.text-base { font-size: var(--text-base) !important; }
+.text-lg { font-size: var(--text-lg) !important; }
+.text-xl { font-size: var(--text-xl) !important; }
+
+.font-normal { font-weight: var(--font-normal) !important; }
+.font-medium { font-weight: var(--font-medium) !important; }
+.font-semibold { font-weight: var(--font-semibold) !important; }
+.font-bold { font-weight: var(--font-bold) !important; }
