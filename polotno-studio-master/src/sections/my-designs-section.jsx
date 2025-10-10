@@ -211,7 +211,7 @@ export const MyDesignsPanel = observer(({ store }) => {
 export const MyDesignsSection = {
   name: 'my-designs',
   Tab: (props) => (
-    <SectionTab name="My Designs" {...props}>
+    <SectionTab name="我的设计" {...props}>
       <FaFolder />
     </SectionTab>
   ),

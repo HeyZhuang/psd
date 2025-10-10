@@ -8,8 +8,6 @@ import { ZoomButtons } from 'polotno/toolbar/zoom-buttons';
 import {
   SidePanel,
   DEFAULT_SECTIONS,
-  PhotosSection,
-  VideosSection,
   TextSection
 } from 'polotno/side-panel';
 import { Workspace } from 'polotno/canvas/workspace';
@@ -60,7 +58,7 @@ setTranslations(en);
 // 清空默认sections，按照新的顺序重新添加
 DEFAULT_SECTIONS.length = 0;
 
-// 按照指定顺序添加sections (排除Videos, Layers等):
+// 按照指定顺序添加sections (排除Videos, Photos, MyFonts, Layers等):
 // 1. My Designs
 DEFAULT_SECTIONS.push(MyDesignsSection);
 // 2. My Elements (我的元素)
@@ -71,16 +69,78 @@ DEFAULT_SECTIONS.push(MyTemplatesSection);
 DEFAULT_SECTIONS.push(UploadSection);
 // 5. Text (文字) - 使用Polotno SDK原生TextSection
 DEFAULT_SECTIONS.push(TextSection);
-// 6. My Fonts (我的字体) - 自定义字体库管理
-DEFAULT_SECTIONS.push(MyFontsSection);
-// 7. Photos (图片)
-DEFAULT_SECTIONS.push(PhotosSection);
-// 8. Shapes (形状)
+// 6. Shapes (形状)
 DEFAULT_SECTIONS.push(ShapesSection);
-// 9. Resize (尺寸调整)
+// 7. Resize (尺寸调整)
 DEFAULT_SECTIONS.push(ResizeSection);
 
-// 注意：明确不添加 VideosSection，确保视频按钮不显示
+// 注意：明确不添加 VideosSection, PhotosSection, MyFontsSection，已从侧边栏移除
+
+// 创建自定义 SidePanel 包装器，过滤掉自动添加的 videos section
+const CustomSidePanel = observer(({ store }) => {
+  // 过滤掉 videos section (Polotno SDK 会自动添加，需要手动移除)
+  const filteredSections = DEFAULT_SECTIONS.filter(
+    section => section.name !== 'videos' && section.name !== 'photos'
+  );
+
+  // 使用 useEffect 在 DOM 渲染后移除 videos 和 photos 按钮
+  React.useEffect(() => {
+    const removeVideosSection = () => {
+      // 移除所有可能的 videos 和 photos section 元素
+      const selectors = [
+        '[data-name="videos"]',
+        '[data-name="photos"]',
+        '.polotno-side-panel-tab:has([data-icon="video"])',
+        '.polotno-side-panel-tab:has([data-icon="media"])'
+      ];
+
+      selectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          console.log('🗑️ 移除元素:', selector, el);
+          el.remove();
+        });
+      });
+
+      // 通过文字内容查找并移除
+      const tabs = document.querySelectorAll('.polotno-side-panel-tab');
+      tabs.forEach(tab => {
+        const text = tab.textContent?.toLowerCase();
+        if (text && (text.includes('video') || text.includes('视频') ||
+                     text.includes('photo') || text.includes('照片'))) {
+          console.log('🗑️ 通过文字内容移除:', text);
+          tab.remove();
+        }
+      });
+    };
+
+    // 初始移除
+    removeVideosSection();
+
+    // 使用 MutationObserver 监听 DOM 变化，防止 Videos section 被重新添加
+    const observer = new MutationObserver(() => {
+      removeVideosSection();
+    });
+
+    const sidePanel = document.querySelector('.polotno-side-tabs-container');
+    if (sidePanel) {
+      observer.observe(sidePanel, {
+        childList: true,
+        subtree: true
+      });
+    }
+
+    // 定时检查（作为备用方案）
+    const interval = setInterval(removeVideosSection, 1000);
+
+    return () => {
+      observer.disconnect();
+      clearInterval(interval);
+    };
+  }, []);
+
+  return <SidePanel store={store} sections={filteredSections} />;
+});
 
 const isStandalone = () => {
   return (
@@ -383,7 +443,7 @@ const App = observer(({ store }) => {
           }}
         >
           <SidePanelWrap>
-            <SidePanel store={store} sections={DEFAULT_SECTIONS} />
+            <CustomSidePanel store={store} />
           </SidePanelWrap>
           <WorkspaceWrap>
             <MemoizedToolbar store={store} />

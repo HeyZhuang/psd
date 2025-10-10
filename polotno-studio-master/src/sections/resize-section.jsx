@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { SectionTab } from 'polotno/side-panel';
-import { Button, InputGroup, RadioGroup, Radio } from '@blueprintjs/core';
+import { Button, InputGroup, RadioGroup, Radio, Checkbox } from '@blueprintjs/core';
 import MdFullscreen from '@meronex/icons/md/MdFullscreen';
 
 const PRESET_SIZES = [
@@ -22,6 +22,9 @@ export const ResizePanel = observer(({ store }) => {
   const [customWidth, setCustomWidth] = React.useState(store.width.toString());
   const [customHeight, setCustomHeight] = React.useState(store.height.toString());
   const [selectedPreset, setSelectedPreset] = React.useState(0);
+  const [scaleStrategy, setScaleStrategy] = React.useState('proportional'); // 'proportional' 或 'fit'
+  const [keepAspectRatio, setKeepAspectRatio] = React.useState(true);
+  const [maintainQuality, setMaintainQuality] = React.useState(true);
 
   const handleResize = () => {
     let width, height;
@@ -76,23 +79,182 @@ export const ResizePanel = observer(({ store }) => {
       }
     }
 
-    const scaleX = width / store.width;
-    const scaleY = height / store.height;
+    const originalWidth = store.width;
+    const originalHeight = store.height;
+
+    let scaleX, scaleY;
+
+    // 根据策略计算缩放比例
+    if (scaleStrategy === 'fit' && keepAspectRatio) {
+      // 智能适配：保持宽高比，完全适配到新画布
+      const scaleRatio = Math.min(width / originalWidth, height / originalHeight);
+      scaleX = scaleRatio;
+      scaleY = scaleRatio;
+      console.log(`🎯 智能适配模式: 统一缩放比例 ${scaleRatio.toFixed(3)}`);
+    } else if (keepAspectRatio) {
+      // 等比缩放：使用较小的缩放比例保持宽高比
+      const scaleRatio = Math.min(width / originalWidth, height / originalHeight);
+      scaleX = scaleRatio;
+      scaleY = scaleRatio;
+      console.log(`📏 等比缩放模式: 统一缩放比例 ${scaleRatio.toFixed(3)}`);
+    } else {
+      // 自由缩放：分别按X和Y轴缩放
+      scaleX = width / originalWidth;
+      scaleY = height / originalHeight;
+      console.log(`🔧 自由缩放模式: X=${scaleX.toFixed(3)}, Y=${scaleY.toFixed(3)}`);
+    }
+
+    console.log(`🔧 画布缩放: ${originalWidth}×${originalHeight} → ${width}×${height}`);
+
+    let totalElements = 0;
+    let imageElements = 0;
 
     store.pages.forEach((page) => {
       page.children.forEach((element) => {
-        element.set({
+        totalElements++;
+
+        // 基础属性缩放
+        const updates = {
           x: element.x * scaleX,
           y: element.y * scaleY,
-          width: element.width * scaleX,
-          height: element.height * scaleY,
-        });
+        };
 
-        if (element.type === 'text' && element.fontSize) {
-          element.set({
-            fontSize: element.fontSize * Math.min(scaleX, scaleY),
-          });
+        // 根据保持质量选项决定是否缩放尺寸
+        if (maintainQuality && element.type === 'image') {
+          // 保持图片原始尺寸，仅调整位置
+          updates.width = element.width;
+          updates.height = element.height;
+          imageElements++;
+          console.log(`  🖼️ 保持图片质量: ${element.id?.substring(0, 8)} - 不缩放尺寸`);
+        } else {
+          // 正常缩放
+          if (keepAspectRatio) {
+            // 等比缩放时，使用统一比例
+            const uniformScale = Math.min(scaleX, scaleY);
+            updates.width = element.width * uniformScale;
+            updates.height = element.height * uniformScale;
+          } else {
+            updates.width = element.width * scaleX;
+            updates.height = element.height * scaleY;
+          }
         }
+
+        // 处理文字元素
+        if (element.type === 'text') {
+          const textScale = keepAspectRatio ? Math.min(scaleX, scaleY) : Math.min(scaleX, scaleY);
+
+          // 缩放字体大小
+          if (element.fontSize) {
+            updates.fontSize = element.fontSize * textScale;
+          }
+
+          // 缩放行高（如果设置了具体数值）
+          if (element.lineHeight && typeof element.lineHeight === 'number' && element.lineHeight > 2) {
+            updates.lineHeight = element.lineHeight * textScale;
+          }
+
+          // 缩放字符间距
+          if (element.letterSpacing) {
+            updates.letterSpacing = element.letterSpacing * textScale;
+          }
+
+          // 处理PSD文字效果（如果存在）
+          if (element.custom && element.custom.textEffects) {
+            const scaledEffects = JSON.parse(JSON.stringify(element.custom.textEffects));
+
+            // 缩放描边宽度
+            if (scaledEffects.stroke && scaledEffects.stroke.size) {
+              scaledEffects.stroke.size = scaledEffects.stroke.size * textScale;
+            }
+
+            // 缩放外发光
+            if (scaledEffects.outerGlow) {
+              if (scaledEffects.outerGlow.size) {
+                scaledEffects.outerGlow.size = scaledEffects.outerGlow.size * textScale;
+              }
+              if (scaledEffects.outerGlow.spread) {
+                scaledEffects.outerGlow.spread = scaledEffects.outerGlow.spread * textScale;
+              }
+            }
+
+            // 缩放投影
+            if (scaledEffects.dropShadow) {
+              if (scaledEffects.dropShadow.distance) {
+                scaledEffects.dropShadow.distance = scaledEffects.dropShadow.distance * textScale;
+              }
+              if (scaledEffects.dropShadow.size) {
+                scaledEffects.dropShadow.size = scaledEffects.dropShadow.size * textScale;
+              }
+              if (scaledEffects.dropShadow.spread) {
+                scaledEffects.dropShadow.spread = scaledEffects.dropShadow.spread * textScale;
+              }
+            }
+
+            // 缩放内阴影
+            if (scaledEffects.innerShadow) {
+              if (scaledEffects.innerShadow.distance) {
+                scaledEffects.innerShadow.distance = scaledEffects.innerShadow.distance * textScale;
+              }
+              if (scaledEffects.innerShadow.size) {
+                scaledEffects.innerShadow.size = scaledEffects.innerShadow.size * textScale;
+              }
+            }
+
+            // 缩放斜面和浮雕
+            if (scaledEffects.bevelEmboss) {
+              if (scaledEffects.bevelEmboss.size) {
+                scaledEffects.bevelEmboss.size = scaledEffects.bevelEmboss.size * textScale;
+              }
+              if (scaledEffects.bevelEmboss.depth) {
+                scaledEffects.bevelEmboss.depth = scaledEffects.bevelEmboss.depth * textScale;
+              }
+            }
+
+            // 更新自定义属性
+            if (!updates.custom) {
+              updates.custom = { ...element.custom };
+            }
+            updates.custom.textEffects = scaledEffects;
+          }
+        }
+
+        // 处理图片元素（包括PSD导入的位图文字）
+        if (element.type === 'image') {
+          // 保持旋转角度
+          if (element.rotation !== undefined) {
+            updates.rotation = element.rotation;
+          }
+
+          // 保持透明度
+          if (element.opacity !== undefined) {
+            updates.opacity = element.opacity;
+          }
+
+          // 处理PSD相关的自定义属性
+          if (element.custom) {
+            if (!updates.custom) {
+              updates.custom = { ...element.custom };
+            }
+
+            // 保持PSD标记
+            if (element.custom.isPSDText) {
+              updates.custom.isPSDText = element.custom.isPSDText;
+            }
+
+            // 保持原始文字内容
+            if (element.custom.originalText) {
+              updates.custom.originalText = element.custom.originalText;
+            }
+
+            // 保持原始图片源以维持质量
+            if (element.custom.originalSrc && maintainQuality) {
+              updates.custom.originalSrc = element.custom.originalSrc;
+            }
+          }
+        }
+
+        // 应用所有更新
+        element.set(updates);
       });
     });
 
@@ -100,6 +262,12 @@ export const ResizePanel = observer(({ store }) => {
 
     // 更新画布尺寸显示
     updateCanvasSizeDisplay(width, height);
+
+    console.log(`✅ 画布缩放完成:`);
+    console.log(`   - 总元素: ${totalElements}`);
+    console.log(`   - 图片元素: ${imageElements} ${maintainQuality ? '(质量保护已启用)' : ''}`);
+    console.log(`   - 缩放策略: ${scaleStrategy === 'fit' ? '智能适配' : '等比缩放'}`);
+    console.log(`   - 保持宽高比: ${keepAspectRatio ? '是' : '否'}`);
   };
 
   const getRatio = () => {
@@ -279,6 +447,82 @@ export const ResizePanel = observer(({ store }) => {
         </div>
       )}
 
+      {/* 缩放选项 */}
+      <div style={{
+        marginBottom: '20px',
+        padding: '16px',
+        backgroundColor: '#f9fafb',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb'
+      }}>
+        <div style={{
+          fontSize: '13px',
+          fontWeight: '600',
+          color: '#374151',
+          marginBottom: '12px'
+        }}>
+          ⚙️ 缩放选项
+        </div>
+
+        {/* 缩放策略 */}
+        <RadioGroup
+          onChange={(e) => setScaleStrategy(e.target.value)}
+          selectedValue={scaleStrategy}
+          style={{ marginBottom: '12px' }}
+        >
+          <Radio
+            label={
+              <div style={{ fontSize: '13px' }}>
+                <strong>等比缩放</strong>
+                <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>
+                  保持元素宽高比，按统一比例缩放
+                </div>
+              </div>
+            }
+            value="proportional"
+          />
+          <Radio
+            label={
+              <div style={{ fontSize: '13px' }}>
+                <strong>智能适配</strong>
+                <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>
+                  自动适配到新画布，保持整体布局
+                </div>
+              </div>
+            }
+            value="fit"
+          />
+        </RadioGroup>
+
+        {/* 附加选项 */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <Checkbox
+            checked={keepAspectRatio}
+            onChange={(e) => setKeepAspectRatio(e.target.checked)}
+            label={
+              <span style={{ fontSize: '13px', color: '#374151' }}>
+                <strong>保持宽高比</strong>
+                <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: '6px' }}>
+                  避免元素变形
+                </span>
+              </span>
+            }
+          />
+          <Checkbox
+            checked={maintainQuality}
+            onChange={(e) => setMaintainQuality(e.target.checked)}
+            label={
+              <span style={{ fontSize: '13px', color: '#374151' }}>
+                <strong>保护图片质量</strong>
+                <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: '6px' }}>
+                  图片不缩放，仅调整位置
+                </span>
+              </span>
+            }
+          />
+        </div>
+      </div>
+
       {/* 操作按钮 */}
       <div style={{
         display: 'flex',
@@ -309,9 +553,9 @@ export const ResizePanel = observer(({ store }) => {
             height: '40px',
             fontWeight: '500',
             fontSize: '14px',
-            backgroundColor: 'white',
-            color: 'black',
-            border: '1px solid #d1d5db'
+            backgroundColor: '#667eea',
+            color: 'white',
+            border: 'none'
           }}
         >
           调整并缩放内容
@@ -327,8 +571,10 @@ export const ResizePanel = observer(({ store }) => {
       }}>
         <div style={{ fontSize: '12px', color: '#1e40af', lineHeight: '1.5' }}>
           <div style={{ fontWeight: '600', marginBottom: '6px' }}>💡 使用提示</div>
-          <div style={{ marginBottom: '4px' }}>• <strong>仅调整画布：</strong>改变画布大小，元素不变</div>
-          <div>• <strong>调整并缩放：</strong>按比例缩放画布和元素</div>
+          <div style={{ marginBottom: '4px' }}>• <strong>仅调整画布：</strong>改变画布大小，元素位置和大小不变</div>
+          <div style={{ marginBottom: '4px' }}>• <strong>调整并缩放：</strong>按比例缩放画布和所有元素</div>
+          <div style={{ marginBottom: '4px' }}>• <strong>保护图片质量：</strong>避免图片因缩放导致模糊失真</div>
+          <div>• <strong>保持宽高比：</strong>确保元素不会被拉伸变形</div>
         </div>
       </div>
     </div>
