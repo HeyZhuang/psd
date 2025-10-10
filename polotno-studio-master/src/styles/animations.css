@@ -1,0 +1,439 @@
+/**
+ * ✨ Animations & Micro-interactions
+ * Smooth, delightful, and performant animations
+ */
+
+/* ========================================
+   🎬 Keyframe Animations
+   ======================================== */
+
+/* Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade In Up */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Down */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In Right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide In Left */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Scale Bounce */
+@keyframes scaleBounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Shimmer (Loading) */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Spin */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Wiggle */
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+/* ========================================
+   🎭 Panel Animations
+   ======================================== */
+
+/* Side Panel Content */
+.polotno-panel-container > * {
+  animation: fadeInUp 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+.polotno-panel-container > *:nth-child(1) { animation-delay: 0ms; }
+.polotno-panel-container > *:nth-child(2) { animation-delay: 30ms; }
+.polotno-panel-container > *:nth-child(3) { animation-delay: 60ms; }
+.polotno-panel-container > *:nth-child(4) { animation-delay: 90ms; }
+.polotno-panel-container > *:nth-child(5) { animation-delay: 120ms; }
+.polotno-panel-container > *:nth-child(6) { animation-delay: 150ms; }
+
+/* Layer Panel Items */
+.layer-item {
+  animation: fadeIn 200ms ease-out;
+}
+
+/* ========================================
+   💫 Micro-interactions
+   ======================================== */
+
+/* Button Click Effect */
+.bp5-button:active,
+.topbar .bp5-button:active,
+.polotno-toolbar .bp5-button:active {
+  animation: scaleBounce 200ms ease-out !important;
+}
+
+/* Card Hover Effect */
+.template-card,
+.image-card,
+.element-card,
+.design-card {
+  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.template-card:active,
+.image-card:active,
+.element-card:active,
+.design-card:active {
+  transform: translateY(0) scale(0.98) !important;
+}
+
+/* Icon Button Ripple Effect */
+.icon-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 300ms ease, height 300ms ease;
+}
+
+.icon-button:active::after {
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================
+   🎨 Modal & Popover Animations
+   ======================================== */
+
+.bp5-overlay {
+  animation: fadeIn 200ms ease-out;
+}
+
+.bp5-dialog,
+.bp5-popover {
+  animation: scaleIn 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bp5-overlay-backdrop {
+  animation: fadeIn 250ms ease-out;
+}
+
+/* ========================================
+   🔄 Loading States
+   ======================================== */
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+.loading-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #f8f8f8 50%,
+    #f0f0f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ========================================
+   🎯 Focus Animations
+   ======================================== */
+
+.bp5-input:focus,
+.bp5-select select:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  animation: fadeIn 150ms ease-out;
+}
+
+/* Focus Ring Pulse */
+@keyframes focusRingPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(50, 118, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(50, 118, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(50, 118, 255, 0);
+  }
+}
+
+input:focus,
+select:focus,
+.bp5-input:focus {
+  animation: focusRingPulse 600ms ease-out;
+}
+
+/* ========================================
+   📱 Drawer & Sheet Animations
+   ======================================== */
+
+/* Right Panel Slide */
+.right-layers-panel {
+  animation: slideInRight 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Side Panel Slide */
+.polotno-side-panel-container {
+  animation: slideInLeft 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   🎪 Toast & Notification Animations
+   ======================================== */
+
+.bp5-toast {
+  animation: slideInRight 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bp5-toast-exit {
+  animation: slideInRight 200ms cubic-bezier(0.4, 0, 1, 1) reverse;
+}
+
+/* ========================================
+   ⚡ Performance Optimizations
+   ======================================== */
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   🎯 Utility Animation Classes
+   ======================================== */
+
+.animate-fade-in {
+  animation: fadeIn 300ms ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 300ms ease-out;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 300ms ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 300ms ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 300ms ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 500ms ease-in-out;
+}
+
+/* Delay Classes */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Duration Classes */
+.duration-fast { animation-duration: 150ms; }
+.duration-normal { animation-duration: 300ms; }
+.duration-slow { animation-duration: 500ms; }
+
+/* ========================================
+   🎨 Hover Effects - Professional Touch
+   ======================================== */
+
+/* Glow Effect */
+.hover-glow {
+  transition: box-shadow 300ms ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(50, 118, 255, 0.3);
+}
+
+/* Lift Effect */
+.hover-lift {
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Grow Effect */
+.hover-grow {
+  transition: transform 200ms ease;
+}
+
+.hover-grow:hover {
+  transform: scale(1.05);
+}
+
+/* ========================================
+   🌟 Special Effects
+   ======================================== */
+
+/* Gradient Animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* Typewriter Effect */
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.typewriter-effect {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typewriter 2s steps(40) 1s 1 normal both;
+}

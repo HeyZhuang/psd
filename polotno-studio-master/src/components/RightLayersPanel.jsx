@@ -1,6 +1,137 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { LayersSection } from '../sections/layers-section';
+import styled from 'polotno/utils/styled';
+
+const PanelContainer = styled('div')`
+  position: fixed;
+  right: 0;
+  top: 56px;
+  bottom: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  border-left: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08), -2px 0 8px rgba(0, 0, 0, 0.04);
+  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: var(--z-sticky, 1020);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg,
+      rgba(50, 118, 255, 0.6) 0%,
+      rgba(50, 118, 255, 0) 30%,
+      rgba(50, 118, 255, 0) 70%,
+      rgba(118, 75, 162, 0.6) 100%
+    );
+    opacity: 0.3;
+  }
+`;
+
+const PanelHeader = styled('div')`
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  min-height: 56px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      rgba(50, 118, 255, 0.3) 0%,
+      rgba(50, 118, 255, 0) 100%
+    );
+  }
+`;
+
+const PanelTitle = styled('h3')`
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #616161;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ToggleButton = styled('button')`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-md, 6px);
+  transition: background 200ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary, #757575);
+
+  &:hover {
+    background: var(--state-hover-bg, #f5f5f5);
+    color: var(--text-primary, #212121);
+  }
+
+  &:active {
+    background: var(--state-active-bg, #eeeeee);
+  }
+`;
+
+const CollapsedLabel = styled('div')`
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #757575);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 200ms ease;
+
+  &:hover {
+    color: var(--text-primary, #212121);
+  }
+`;
+
+const PanelContent = styled('div')`
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+  background: var(--bg-secondary, #fafafa);
+
+  /* Modern scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--neutral-300, #e0e0e0);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--neutral-400, #bdbdbd);
+  }
+`;
 
 export const RightLayersPanel = observer(({ store, isOpen, onToggle }) => {
   const panelRef = React.useRef(null);
@@ -23,87 +154,25 @@ export const RightLayersPanel = observer(({ store, isOpen, onToggle }) => {
   }, []);
 
   return (
-    <div
+    <PanelContainer
       ref={panelRef}
       style={{
-        position: 'fixed',
-        right: 0,
-        top: '50px',
-        bottom: 0,
-        width: isOpen ? '320px' : '50px',
-        minWidth: isOpen ? '320px' : '50px',
-        maxWidth: isOpen ? '320px' : '50px',
-        background: 'linear-gradient(180deg, #ffffff 0%, #fafafa 100%)',
-        borderLeft: '1px solid #e5e5e5',
-        display: 'flex',
-        flexDirection: 'column',
+        width: isOpen ? '280px' : '48px',
+        minWidth: isOpen ? '280px' : '48px',
+        maxWidth: isOpen ? '280px' : '48px',
         alignItems: isOpen ? 'stretch' : 'center',
         justifyContent: isOpen ? 'flex-start' : 'center',
         cursor: isOpen ? 'default' : 'pointer',
-        zIndex: 10,
-        boxShadow: isOpen ? '-2px 0 12px rgba(0, 0, 0, 0.08)' : '-2px 0 8px rgba(0, 0, 0, 0.05)',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        willChange: 'width',
       }}
       onClick={isOpen ? undefined : onToggle}
     >
       {!isOpen ? (
-        <div
-          style={{
-            writingMode: 'vertical-rl',
-            transform: 'rotate(180deg)',
-            fontSize: '13px',
-            fontWeight: 600,
-            color: '#333333',
-            letterSpacing: '0.05em',
-          }}
-        >
-          LAYERS
-        </div>
+        <CollapsedLabel>LAYERS</CollapsedLabel>
       ) : (
         <>
-          {/* 头部 */}
-          <div
-            style={{
-              padding: '16px 20px',
-              borderBottom: '1px solid #e5e5e5',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: '#ffffff',
-            }}
-          >
-            <h3
-              style={{
-                margin: 0,
-                fontSize: '16px',
-                fontWeight: 600,
-                color: '#333333',
-                letterSpacing: '0.02em',
-              }}
-            >
-              Layers
-            </h3>
-            <button
-              onClick={onToggle}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '4px',
-                borderRadius: '4px',
-                transition: 'background 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#f5f5f5';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'none';
-              }}
-            >
+          <PanelHeader>
+            <PanelTitle>Layers</PanelTitle>
+            <ToggleButton onClick={onToggle} aria-label="Toggle layers panel">
               <svg
                 width="20"
                 height="20"
@@ -113,29 +182,21 @@ export const RightLayersPanel = observer(({ store, isOpen, onToggle }) => {
               >
                 <path
                   d="M15 10L10 5L5 10"
-                  stroke="#333333"
+                  stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   transform="rotate(90 10 10)"
                 />
               </svg>
-            </button>
-          </div>
+            </ToggleButton>
+          </PanelHeader>
 
-          {/* 图层内容 */}
-          <div
-            className="right-layers-panel"
-            style={{
-              flex: 1,
-              overflow: 'auto',
-              padding: '12px',
-            }}
-          >
+          <PanelContent className="right-layers-panel">
             <LayersSection.Panel store={store} />
-          </div>
+          </PanelContent>
         </>
       )}
-    </div>
+    </PanelContainer>
   );
 });

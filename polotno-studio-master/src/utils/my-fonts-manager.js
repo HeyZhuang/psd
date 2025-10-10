@@ -3,16 +3,16 @@
 const STORAGE_KEY = 'polotno_custom_fonts';
 const MAX_FONTS = 50; // 最多存储50个字体
 
-// 从 fonts 文件夹预设的字体列表
+// 从 fonts 文件夹预设的字体列表（使用正确的字体族名称）
 export const PRESET_FONTS = [
-  { name: 'Brudoni Desktop', fileName: '3601 Brudoni Desktop.otf', family: 'Brudoni Desktop' },
-  { name: 'Aileron Black Italic', fileName: 'Aileron-BlackItalic-3.ttf', family: 'Aileron' },
+  { name: 'Brudoni', fileName: '3601 Brudoni Desktop.otf', family: 'Brudoni' },
+  { name: 'Aileron Black Italic', fileName: 'Aileron-BlackItalic-3.ttf', family: 'Aileron Black Italic' },
   { name: 'Alex Brush', fileName: 'Alexbrush Regular.ttf', family: 'Alex Brush' },
-  { name: 'Altgotisch', fileName: 'Altgotisch.ttf', family: 'Altgotisch' },
+  { name: 'CAT Altgotisch', fileName: 'Altgotisch.ttf', family: 'CAT Altgotisch' },
   { name: 'At Askara', fileName: 'At Askara.otf', family: 'At Askara' },
   { name: 'Boldgod Display', fileName: 'Boldgod Display.otf', family: 'Boldgod Display' },
   { name: 'CAT Reporter', fileName: 'CAT Reporter.ttf', family: 'CAT Reporter' },
-  { name: 'Attack Graffiti', fileName: 'a Attack Graffiti.ttf', family: 'Attack Graffiti' },
+  { name: 'Attack Graffiti', fileName: 'a Attack Graffiti.ttf', family: 'a Attack Graffiti' },
   { name: '華康POP1體W5', fileName: '華康POP1體W5.ttf', family: 'DFPPop1-W5' },
   { name: '華康POP1體W9', fileName: '華康POP1體W9.ttf', family: 'DFPPop1-W9' },
   { name: '華康超特圓體', fileName: '華康超特圓體.ttf', family: 'DFSuper-W7' },

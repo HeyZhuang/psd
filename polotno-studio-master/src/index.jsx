@@ -6,6 +6,12 @@ import { unstable_setAnimationsEnabled } from 'polotno/config';
 import { createProject, ProjectContext } from './project';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
+import './styles/design-tokens.css';
+import './styles/modern-ui.css';
+import './styles/enhanced-sidepanel.css';
+import './styles/animations.css';
+import './styles/premium-effects.css';
+import './styles/layers-premium.css';
 import './index.css';
 import './styles/psd-precision.css';
 import './styles/font-select-override.css';
@@ -47,31 +53,33 @@ console.log('📝 准备加载自定义字体（将追加到默认字体列表�
 window.store = store;
 store.addPage();
 
-// 加载所有自定义字体
+// 加载所有自定义字体 - 使用正确的字体族名称
 const customFonts = [
-  { fontFamily: '華康POP1體W5', url: '/fonts/華康POP1體W5.ttf' },
-  { fontFamily: '華康POP1體W9', url: '/fonts/華康POP1體W9.ttf' },
-  { fontFamily: '華康超特圓體', url: '/fonts/華康超特圓體.ttf' },
-  { fontFamily: 'Altgotisch', url: '/fonts/Altgotisch.ttf' },
+  { fontFamily: 'DFPPop1-W5', url: '/fonts/華康POP1體W5.ttf' },
+  { fontFamily: 'DFPPop1-W9', url: '/fonts/華康POP1體W9.ttf' },
+  { fontFamily: 'DFSuper-W7', url: '/fonts/華康超特圓體.ttf' },
+  { fontFamily: 'CAT Altgotisch', url: '/fonts/Altgotisch.ttf' },
   { fontFamily: 'Boldgod Display', url: '/fonts/Boldgod Display.otf' },
-  { fontFamily: 'Attack Graffiti', url: '/fonts/a Attack Graffiti.ttf' },
-  { fontFamily: '3601 Brudoni Desktop', url: '/fonts/3601 Brudoni Desktop.otf' },
+  { fontFamily: 'a Attack Graffiti', url: '/fonts/a Attack Graffiti.ttf' },
+  { fontFamily: 'Brudoni', url: '/fonts/3601 Brudoni Desktop.otf' },
   { fontFamily: 'Aileron Black Italic', url: '/fonts/Aileron-BlackItalic-3.ttf' },
-  { fontFamily: 'Alexbrush', url: '/fonts/Alexbrush Regular.ttf' },
+  { fontFamily: 'Alex Brush', url: '/fonts/Alexbrush Regular.ttf' },
   { fontFamily: 'At Askara', url: '/fonts/At Askara.otf' },
   { fontFamily: 'CAT Reporter', url: '/fonts/CAT Reporter.ttf' }
 ];
 
-customFonts.forEach(font => {
+console.log('📦 开始添加自定义字体到 Polotno store...');
+
+customFonts.forEach((font, index) => {
   try {
     store.addFont(font);
-    console.log(`✅ 已添加自定义字体: ${font.fontFamily}`);
+    console.log(`✅ [${index + 1}/${customFonts.length}] 已添加字体: ${font.fontFamily}`);
   } catch (error) {
-    console.error(`❌ 添加字体失败: ${font.fontFamily}`, error);
+    console.error(`❌ [${index + 1}/${customFonts.length}] 添加字体失败: ${font.fontFamily}`, error);
   }
 });
 
-console.log(`📝 已加载 ${customFonts.length} 个自定义字体`);
+console.log(`📝 字体添加完成，共 ${customFonts.length} 个字体`);
 
 // 验证字体列表
 setTimeout(() => {

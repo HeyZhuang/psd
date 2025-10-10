@@ -43,9 +43,10 @@ import zhCh from './translations/zh-ch';
 
 import Topbar from './topbar/topbar';
 import { RightLayersPanel } from './components/RightLayersPanel';
+import { CustomToolbar } from './components/CustomToolbar';
 
-// 优化的 Toolbar - 防止不必要的重渲染
-const MemoizedToolbar = React.memo(Toolbar);
+// 优化的 Toolbar - 使用自定义工具栏
+const MemoizedToolbar = React.memo(CustomToolbar);
 const MemoizedWorkspace = React.memo(Workspace);
 const MemoizedZoomButtons = React.memo(ZoomButtons);
 const MemoizedPagesTimeline = React.memo(PagesTimeline);
@@ -460,26 +461,42 @@ const App = observer(({ store }) => {
       </div>
       {project.status === 'loading' && (
         <div
+          className="glass-overlay"
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
             width: '100vw',
             height: '100vh',
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            background: 'rgba(250, 250, 250, 0.95)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <div
+            className="premium-card"
             style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              color: 'white',
+              background: 'white',
+              padding: '48px',
+              borderRadius: '16px',
+              boxShadow: '0 12px 48px rgba(0, 0, 0, 0.1)',
+              textAlign: 'center',
+              minWidth: '300px',
             }}
           >
             <Spinner />
+            <div style={{
+              marginTop: '24px',
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#424242'
+            }}>
+              Loading...
+            </div>
           </div>
         </div>
       )}

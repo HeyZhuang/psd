@@ -1,0 +1,640 @@
+/**
+ * 🗂️ Premium Layers Panel - Professional Grade
+ * Advanced layer management with Figma/Photoshop-level UX
+ */
+
+/* ========================================
+   📋 Layer Panel Container
+   ======================================== */
+
+.layers-panel-premium {
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  border-left: 1px solid #e5e5e5;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Panel Header */
+.layers-header {
+  padding: 16px;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+}
+
+.layers-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #616161;
+}
+
+.layers-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 8px;
+  background: linear-gradient(135deg, #3276FF 0%, #1764EA 100%);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(50, 118, 255, 0.2);
+}
+
+/* ========================================
+   🎯 Layer Item Styles
+   ======================================== */
+
+.layer-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin: 2px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  border: 1px solid transparent;
+}
+
+.layer-item:hover {
+  background: linear-gradient(90deg, rgba(50, 118, 255, 0.04) 0%, rgba(50, 118, 255, 0.02) 100%);
+  border-color: rgba(50, 118, 255, 0.1);
+  transform: translateX(2px);
+}
+
+.layer-item.selected {
+  background: linear-gradient(90deg, rgba(50, 118, 255, 0.08) 0%, rgba(50, 118, 255, 0.04) 100%);
+  border-color: #3276FF;
+  box-shadow: 0 2px 8px rgba(50, 118, 255, 0.12);
+}
+
+.layer-item.selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #3276FF 0%, #1764EA 100%);
+  border-radius: 0 2px 2px 0;
+}
+
+/* Drag and Drop States */
+.layer-item.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.layer-item.drop-target {
+  background: rgba(50, 118, 255, 0.1);
+  border-color: #3276FF;
+  border-style: dashed;
+}
+
+.layer-item.drop-target::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #3276FF;
+  box-shadow: 0 0 8px rgba(50, 118, 255, 0.5);
+}
+
+/* ========================================
+   🎨 Layer Type Icons
+   ======================================== */
+
+.layer-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+  color: #757575;
+  font-size: 12px;
+}
+
+.layer-icon.type-text {
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  color: #1976D2;
+}
+
+.layer-icon.type-image {
+  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+  color: #F57C00;
+}
+
+.layer-icon.type-shape {
+  background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+  color: #7B1FA2;
+}
+
+.layer-icon.type-group {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  color: #388E3C;
+}
+
+/* ========================================
+   📝 Layer Name
+   ======================================== */
+
+.layer-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: #212121;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.layer-item.selected .layer-name {
+  color: #1764EA;
+  font-weight: 600;
+}
+
+.layer-name-editing {
+  padding: 4px 8px;
+  background: white;
+  border: 2px solid #3276FF;
+  border-radius: 4px;
+  outline: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: #212121;
+}
+
+/* ========================================
+   🎚️ Layer Controls
+   ======================================== */
+
+.layer-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.layer-item:hover .layer-controls,
+.layer-item.selected .layer-controls {
+  opacity: 1;
+}
+
+.layer-control-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  color: #757575;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.layer-control-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #212121;
+}
+
+.layer-control-btn:active {
+  transform: scale(0.9);
+}
+
+.layer-control-btn.active {
+  color: #3276FF;
+  background: rgba(50, 118, 255, 0.1);
+}
+
+/* Visibility Toggle */
+.layer-visibility {
+  font-size: 14px;
+}
+
+.layer-visibility.hidden {
+  color: #bdbdbd;
+}
+
+/* Lock Toggle */
+.layer-lock {
+  font-size: 12px;
+}
+
+.layer-lock.locked {
+  color: #f44336;
+}
+
+/* ========================================
+   📁 Layer Groups
+   ======================================== */
+
+.layer-group {
+  margin: 4px 0;
+}
+
+.layer-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin: 0 8px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f5f5f5 0%, #fafafa 100%);
+  border: 1px solid #e5e5e5;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.layer-group-header:hover {
+  background: linear-gradient(90deg, #eeeeee 0%, #f5f5f5 100%);
+  border-color: #bdbdbd;
+}
+
+.layer-group-expand {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 200ms ease;
+  color: #757575;
+  font-size: 10px;
+}
+
+.layer-group-expand.expanded {
+  transform: rotate(90deg);
+}
+
+.layer-group-children {
+  margin-left: 20px;
+  padding-left: 8px;
+  border-left: 2px solid #e5e5e5;
+  margin-top: 4px;
+}
+
+.layer-group-children.collapsed {
+  display: none;
+}
+
+/* ========================================
+   🎭 Layer Thumbnails
+   ======================================== */
+
+.layer-thumbnail {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+  border: 1px solid #e5e5e5;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.layer-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.layer-thumbnail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ========================================
+   🏷️ Layer Tags
+   ======================================== */
+
+.layer-tags {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.layer-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  color: #757575;
+}
+
+.layer-tag.tag-locked {
+  background: rgba(244, 67, 54, 0.1);
+  color: #d32f2f;
+}
+
+.layer-tag.tag-hidden {
+  background: rgba(158, 158, 158, 0.1);
+  color: #757575;
+}
+
+.layer-tag.tag-effects {
+  background: rgba(156, 39, 176, 0.1);
+  color: #7b1fa2;
+}
+
+/* ========================================
+   🔍 Search and Filter
+   ======================================== */
+
+.layers-search {
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.layers-search-input {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  background: #f5f5f5;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #212121;
+  transition: all 200ms ease;
+}
+
+.layers-search-input:focus {
+  background: white;
+  border-color: #3276FF;
+  box-shadow: 0 0 0 3px rgba(50, 118, 255, 0.1);
+  outline: none;
+}
+
+.layers-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #757575;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* Filter Buttons */
+.layers-filters {
+  display: flex;
+  gap: 6px;
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  overflow-x: auto;
+}
+
+.layers-filter-btn {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  color: #757575;
+  cursor: pointer;
+  transition: all 200ms ease;
+  white-space: nowrap;
+}
+
+.layers-filter-btn:hover {
+  background: #f5f5f5;
+  border-color: #bdbdbd;
+}
+
+.layers-filter-btn.active {
+  background: linear-gradient(135deg, #3276FF 0%, #1764EA 100%);
+  border-color: #3276FF;
+  color: white;
+  box-shadow: 0 2px 8px rgba(50, 118, 255, 0.2);
+}
+
+/* ========================================
+   ⚡ Quick Actions Toolbar
+   ======================================== */
+
+.layers-quick-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.quick-action-btn {
+  flex: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #f5f5f5;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.quick-action-btn:hover {
+  background: #eeeeee;
+  border-color: #bdbdbd;
+  transform: translateY(-1px);
+}
+
+.quick-action-btn:active {
+  transform: translateY(0);
+}
+
+.quick-action-icon {
+  font-size: 16px;
+  color: #757575;
+}
+
+.quick-action-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #757575;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ========================================
+   📊 Layer Statistics
+   ======================================== */
+
+.layers-stats {
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #3276FF;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #757575;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ========================================
+   🎯 Context Menu
+   ======================================== */
+
+.layer-context-menu {
+  position: fixed;
+  min-width: 200px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  z-index: 10000;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.context-menu-item:hover {
+  background: rgba(50, 118, 255, 0.08);
+}
+
+.context-menu-icon {
+  width: 18px;
+  font-size: 14px;
+  color: #757575;
+}
+
+.context-menu-label {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: #212121;
+}
+
+.context-menu-shortcut {
+  font-size: 11px;
+  color: #9e9e9e;
+  font-weight: 600;
+}
+
+.context-menu-divider {
+  height: 1px;
+  background: #e5e5e5;
+  margin: 4px 0;
+}
+
+/* ========================================
+   🎨 Empty State
+   ======================================== */
+
+.layers-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #616161;
+  margin-bottom: 8px;
+}
+
+.empty-description {
+  font-size: 13px;
+  color: #9e9e9e;
+  line-height: 1.5;
+}
+
+/* ========================================
+   🌊 Scrollbar Styling
+   ======================================== */
+
+.layers-panel-premium::-webkit-scrollbar {
+  width: 8px;
+}
+
+.layers-panel-premium::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.layers-panel-premium::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #bdbdbd 0%, #9e9e9e 100%);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.layers-panel-premium::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9e9e9e 0%, #757575 100%);
+  background-clip: content-box;
+}
