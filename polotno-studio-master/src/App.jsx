@@ -211,12 +211,14 @@ const App = observer(({ store }) => {
       clearTimeout(resizeTimeoutRef.current);
     }
 
-    // 立即触发一次 resize
-    console.log('🔄 触发 resize 事件 (立即)');
-    window.dispatchEvent(new Event('resize'));
+    // 使用 requestAnimationFrame 确保在下一帧触发，避免抖动
+    requestAnimationFrame(() => {
+      console.log('🔄 触发 resize 事件 (动画帧)');
+      window.dispatchEvent(new Event('resize'));
+    });
 
-    // 在过渡期间多次触发 resize 确保平滑更新
-    const resizeIntervals = [50, 100, 150, 200, 250, 300, 350];
+    // 过渡期间减少触发次数，只在关键时间点触发
+    const resizeIntervals = [100, 300]; // 从7次减少到2次
     resizeIntervals.forEach(delay => {
       setTimeout(() => {
         console.log(`🔄 触发 resize 事件 (${delay}ms)`);
@@ -230,7 +232,7 @@ const App = observer(({ store }) => {
       console.log('🔄 触发 resize 事件 (最终)');
       window.dispatchEvent(new Event('resize'));
       resizeTimeoutRef.current = null;
-    }, 400);
+    }, 350);
 
     return () => {
       if (resizeTimeoutRef.current) {
