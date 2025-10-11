@@ -1,0 +1,68 @@
+/* ========== Workspace 紧急修复 CSS ========== */
+/* 这个文件用于覆盖所有可能导致 workspace 不可见的 CSS */
+
+/* 确保 Workspace 容器可见且可交互 */
+.polotno-workspace-wrap,
+.polotno-workspace-container,
+.polotno-workspace,
+div[class*="WorkspaceWrap"],
+div[class*="workspace"] {
+  display: flex !important;
+  flex: 1 !important;
+  flex-direction: column !important;
+  position: relative !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Konva 画布必须可见 */
+.konvajs-content,
+.konva-stage,
+.polotno-canvas-container {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  overflow: visible !important;
+  transform: none !important;
+  position: relative !important;
+}
+
+/* Canvas 元素 */
+canvas {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* 工作区背景 */
+.polotno-workspace-container {
+  background: linear-gradient(135deg, #fafbfc 0%, #f0f4f8 100%) !important;
+  padding: 20px !important;
+}
+
+/* 移除所有可能阻止交互的属性 */
+.polotno-workspace-wrap *,
+.polotno-workspace-container * {
+  pointer-events: auto !important;
+}
+
+/* 确保 z-index 层级正确 */
+.polotno-workspace-wrap {
+  z-index: 1 !important;
+}
+
+.polotno-workspace-container {
+  z-index: 2 !important;
+}
+
+.konvajs-content {
+  z-index: 3 !important;
+}

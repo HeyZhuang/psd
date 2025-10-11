@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Polotno 基础测试</title>
+    <script src="https://unpkg.com/polotno@2.28.3/polotno.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+
+    <script>
+        const { createStore, PolotnoContainer, WorkspaceWrap, Workspace, Toolbar } = window.Polotno;
+
+        // 创建 store
+        const store = createStore({
+            key: 'JtaT2TQRl_EqM_V0SXL0',
+        });
+
+        // 添加页面
+        store.addPage();
+
+        // 添加测试元素
+        store.activePage.addElement({
+            type: 'text',
+            x: 100,
+            y: 100,
+            text: '基础测试 - 如果你能看到这个，Polotno 是正常的',
+            fontSize: 30,
+            fill: '#FF0000',
+        });
+
+        console.log('Store created:', store);
+        console.log('Active page:', store.activePage);
+        console.log('Elements:', store.activePage.children.length);
+
+        // 渲染
+        const container = document.getElementById('container');
+        const root = ReactDOM.createRoot(container);
+        root.render(
+            React.createElement(PolotnoContainer, null,
+                React.createElement(WorkspaceWrap, null,
+                    React.createElement(Toolbar, { store }),
+                    React.createElement(Workspace, { store })
+                )
+            )
+        );
+    </script>
+</body>
+</html>

@@ -36,19 +36,28 @@ The repository has a unique structure where the actual application code is in a 
 
 ### Main Application Structure
 
-- **Entry Point**: `polotno-studio-master/src/index.jsx` - Initializes the Polotno store, sets up PSD precision systems, and renders the main App
-- **Main App**: `polotno-studio-master/src/App.jsx` - Defines the side panel sections in a specific order and sets up the overall layout
+- **Entry Point**: `src/index.jsx` - Initializes the Polotno store, sets up PSD precision systems, and renders the main App
+  - Creates Polotno store with license key and domain check configuration
+  - Loads custom fonts from `/public/fonts/` directory (11 preset fonts including Chinese fonts)
+  - Initializes precision rendering, text rendering, and debugging systems
+  - Sets up React Error Boundary with Sentry integration
+- **Main App**: `src/App.jsx` - Defines the side panel sections in a specific order and sets up the overall layout
+  - Custom SidePanel with MutationObserver to filter unwanted sections (videos, photos)
+  - Right-click context menu for saving elements to My Elements library
+  - Dynamic layout system with collapsible right panel (320px ↔ 50px)
+  - Font selector styling applied via `applyFontSelectStyles()` after 2000ms delay
 - **Build System**: Vite 6 with React plugin, includes Sentry integration for error tracking and bundle analyzer
 
 ### PSD Import System
 
 The PSD import system is the core feature of this application:
 
-1. **PSD Parsing** (`psd-utils.js`): Uses `ag-psd` library to parse PSD files with high precision settings for image quality
+1. **PSD Parsing** (`src/psd-utils.js`, 64KB largest file): Uses `ag-psd` library to parse PSD files with high precision settings for image quality
    - `parsePSDFile()`: Main entry point for PSD parsing
    - `layerToPolotnoElement()`: Converts PSD layers to Polotno elements with effect preservation
    - `flattenLayers()`: Recursively processes layer hierarchies including groups and hidden layers
    - Supports text effects: stroke, outer glow, drop shadow, color overlay, inner shadow, bevel & emboss
+   - Returns conversion log with detailed layer information for debugging
 
 2. **Text Import Modes**: Controlled via `window.psdImportOptions.rasterizeText`
    - `false` (default): Import text as editable with full editing capabilities
@@ -56,13 +65,18 @@ The PSD import system is the core feature of this application:
 
 3. **Text Editing System**:
    - `utils/PSDTextManager.js`: Manages text editing lifecycle, double-click handlers, and keyboard shortcuts (Enter key)
+     - Uses MobX `autorun` to watch `selectedElements` (avoids polling)
+     - Exposes global `window.psdTextManager` for debugging
    - `components/PSDTextEditor.jsx`: Full-featured text editor with font, size, color, alignment, line height, letter spacing, and text effects controls
    - `utils/FontManager.js`: Smart font loading and fallback system with 200+ professional font mappings
 
 4. **Precision Rendering**:
    - `utils/PrecisionRenderer.js`: Pixel-perfect rendering with high-DPI screen support and 2x supersampling
+     - Uses 5000ms polling interval for element change detection
    - `utils/PolotnoTextRenderer.js`: Enhanced text rendering integrated with Konva
+     - Uses 3000ms and 5000ms intervals for text enhancement
    - `utils/PSDDebugger.js`: Debug system (activate with Ctrl+Shift+D)
+     - Exposes global `window.psdDebugger` for debugging
    - `styles/psd-precision.css`: CSS injected for precise text effects
 
 ### Side Panel Sections (Order Matters)
@@ -73,10 +87,8 @@ The section order is explicitly configured in `App.jsx`:
 3. My Templates (`sections/my-templates-section.jsx`) - User-created template management
 4. Upload (`sections/upload-section.jsx`) - PSD import entry point with text layer detection
 5. Text (Polotno default TextSection) - Native text section with font management
-6. My Fonts (`sections/my-fonts-section.jsx`) - Custom font library management with preset fonts
-7. Photos (Polotno default PhotosSection) - Image assets
-8. Shapes (`sections/shapes-section.jsx`) - Shape elements
-9. Resize (`sections/resize-section.jsx`) - Canvas resizing tools
+6. Shapes (`sections/shapes-section.jsx`) - Shape elements
+7. Resize (`sections/resize-section.jsx`) - Canvas resizing tools
 
 Additional sections available but not in default order:
 - Icons (`sections/icons-section.jsx`)
@@ -85,24 +97,34 @@ Additional sections available but not in default order:
 - Stable Diffusion (`sections/stable-diffusion-section.jsx`)
 - Layers (`sections/layers-section.jsx`)
 
-Note: Videos and UserTemplates sections are explicitly excluded from the default panel.
+Note: Videos and Photos sections are explicitly excluded via MutationObserver and filtered arrays in `CustomSidePanel`.
 
 ### State Management
 
 - **Polotno Store**: Global store accessible via `window.store`
+  - Created with `createStore()` from `polotno/model/store`
+  - Domain check disabled in development environment
+  - Custom fonts added via `store.addFont()`
 - **Project Context**: Project management accessible via `window.project`
+  - Created with `createProject({ store })`
+  - Handles cloud sync with 2000ms polling interval (see `src/project.js:4731`)
 - **MobX**: Used for reactive state management with observer pattern
 - **Local Storage**: Used for persisting user templates and assets via `storage.js`
+  - My Elements: localStorage key for element library
+  - My Fonts: localStorage key for custom fonts (Base64 for uploads, URLs for presets)
+  - Templates: localStorage key for user templates
 
 ### Layout System
 
-- **Left Panel**: Side panel with tool sections (My Designs, Upload, Text, Photos, etc.)
+- **Left Panel**: Side panel with tool sections (My Designs, Upload, Text, Shapes, etc.) - 280px width
 - **Center**: Main workspace canvas with toolbar, zoom controls, and pages timeline
+  - Uses memoized components: `MemoizedToolbar`, `MemoizedWorkspace`, `MemoizedZoomButtons`, `MemoizedPagesTimeline`
+  - Custom toolbar: `CustomToolbar` component with PSD text controls
 - **Right Panel**: `RightLayersPanel` component provides collapsible layer management
   - Toggles between 320px (open) and 50px (collapsed)
   - Window resize events are dispatched during transitions to ensure Polotno recalculates canvas size
-  - Multiple resize triggers at intervals (50ms, 100ms, 150ms, 200ms, 250ms, 300ms, 350ms) ensure smooth transitions
-
+  - Reduced resize triggers from 7 to 2 times (100ms, 300ms intervals) for performance
+  - Uses `cubic-bezier(0.4, 0, 0.2, 1)` transition curve for smooth animation
 
 ### Custom Asset Management
 
@@ -113,18 +135,19 @@ Note: Videos and UserTemplates sections are explicitly excluded from the default
 - Supports all element types with full property preservation
 - Drag-and-drop from My Elements panel to canvas
 - Maximum 100 elements stored (FIFO overflow)
+- Toast notification system with slide-down animation on save
 
 **My Fonts System**:
-- `utils/my-fonts-manager.js`: Custom font library manager
+- `utils/my-fonts-manager.js`: Custom font library manager (8474 bytes)
 - Preset fonts loaded from `/public/fonts/` directory
 - Users can upload additional fonts (TTF, OTF formats)
 - Fonts stored in localStorage (user uploads use Base64, presets use URL references)
 - Maximum 50 custom fonts
 - Preset fonts include Brudoni, Alex Brush, CAT fonts, and Chinese fonts (華康 series)
-- Font selector integration via `utils/font-select-fixer.js`
+- Font selector integration via `utils/font-select-fixer.js` (8736 bytes, 2000ms and 3000ms intervals)
 
 **My Templates System**:
-- `utils/template-manager.js`: User template management
+- `utils/template-manager.js`: User template management (6856 bytes)
 - Save entire designs as reusable templates
 - Templates stored in localStorage with thumbnails
 - Support for template categories and organization
@@ -145,6 +168,7 @@ The FontManager provides:
 - Intelligent font fallback mapping (Adobe fonts, system fonts, CJK fonts)
 - Font loading validation and caching
 - Font family chain generation with appropriate fallbacks
+- 200+ professional font mappings (including Chinese fonts like DFPPop1, DFSuper)
 
 ### Image Quality Optimization
 
@@ -157,30 +181,40 @@ The codebase implements multiple quality enhancement techniques:
 ### Global Debugging Interface
 
 - `window.psdTextManager`: Access text editing functionality
+  - `getAllPSDTextElements()`: Get all PSD text elements
+  - `batchEditPSDText()`: Batch edit all text
 - `window.psdDebugger`: Access debug logging and conversion logs
+  - `showConversionLog()`: Display PSD conversion details
 - `window.psdImportOptions`: Configure import behavior
+  - `rasterizeText`: boolean to control text import mode
+- `window.debugFonts()`: View current font list (exposed after 2000ms delay)
+- `window.store`: Direct access to Polotno store
+- `window.project`: Direct access to project context
 
 ## Important Development Notes
 
 ### Polotno SDK Integration
 
-- Uses Polotno SDK with license key configured in `index.jsx`
-- Development environment has domain check disabled via `disableDomainCheck: true`
+- Uses Polotno SDK with license key configured in `index.jsx`: `JtaT2TQRl_EqM_V0SXL0`
+- Development environment has domain check disabled via `disableDomainCheck: true` (when hostname is localhost or 127.0.0.1)
 - Custom sections extend Polotno's default sections
 - Custom fonts are added to store via `store.addFont()` in `index.jsx`
 - Animations enabled via `unstable_setAnimationsEnabled(true)`
+- 11 preset fonts loaded on initialization (华康系列, CAT, Brudoni, Alex Brush, etc.)
 
 ### Error Handling
 
 - React Error Boundary wraps the entire app with Sentry integration
 - Fallback UI provides cache clearing functionality
-- Logger configured in `logger.js`
+- Logger configured in `logger.js` (3417 bytes)
+- Sentry error tracking for production errors
 
 ### Translation Support
 
 Internationalization configured via `setTranslations()` with support for:
 - English (en), French (fr), Indonesian (id), Russian (ru), Portuguese (pt-br), Chinese (zh-ch)
 - Translation files in `translations/` directory
+- Language detection based on `project.language` property
 
 ## Debugging Features
 
@@ -189,13 +223,14 @@ Internationalization configured via `setTranslations()` with support for:
 - **Double-click or Enter**: Edit PSD text elements
 - Console logging for PSD parsing, font loading, and precision rendering
 - Debug button in topbar (`topbar/debug-button.jsx`) for quick access to debugging tools
+- Conversion logs stored in `window.psdDebugger` for later inspection
 
 ### Key Topbar Components
 
-- `topbar/topbar.jsx`: Main topbar layout
+- `topbar/topbar.jsx`: Main topbar layout (50px height)
 - `topbar/download-button.jsx`: Export functionality for various formats
 - `topbar/psd-text-button.jsx`: PSD text editing controls (batch edit, export text data)
-- `topbar/psd-export-button.jsx`: Export back to PSD format
+- `topbar/psd-export.jsx`: Export back to PSD format (see `src/psd-export.js`)
 - `topbar/debug-button.jsx`: Toggle debugging features
 - `topbar/file-menu.jsx`: File operations menu
 - `topbar/user-menu.jsx`: User account and settings
@@ -211,6 +246,7 @@ The codebase uses several periodic timers and observers that can impact performa
    - `font-select-fixer.js`: Font style application (2000ms and 3000ms)
    - `PrecisionRenderer.js`: Element change polling (5000ms)
    - `PolotnoTextRenderer.js`: Text enhancement (3000ms and 5000ms)
+   - `App.jsx`: MutationObserver for section filtering (1000ms interval as backup)
 
 2. **Use MobX Reactions Instead of Polling**: When monitoring Polotno store changes, prefer MobX `autorun` or `reaction` over `setInterval`. Example: `PSDTextManager.js` uses `autorun` to watch `selectedElements`.
 
@@ -219,6 +255,8 @@ The codebase uses several periodic timers and observers that can impact performa
 4. **Avoid Heavy Operations on Panel Mount**: Loading data or making network requests when panels open can cause UI freezes. Always load from local cache first, then sync in background if needed.
 
 5. **Context-Specific Observers**: Limit MutationObserver scope to specific containers (e.g., `.polotno-panel-container`) rather than `document.body` to reduce callback frequency.
+
+6. **Reduced Resize Triggers**: Right panel transitions now trigger only 2 resize events (was 7) at 100ms and 300ms intervals for better performance.
 
 ### Common Performance Issues
 
@@ -239,16 +277,26 @@ The codebase uses several periodic timers and observers that can impact performa
 
 ### Utilities
 
-- `utils/PSDTextManager.js`: Manages text editing lifecycle with MobX autorun
-- `utils/FontManager.js`: Font loading, validation, and fallback mapping
-- `utils/PrecisionRenderer.js`: Pixel-perfect rendering with supersampling
-- `utils/PolotnoTextRenderer.js`: Enhanced text rendering with Konva integration
-- `utils/PSDDebugger.js`: Comprehensive debugging system with conversion logs
-- `utils/my-elements-manager.js`: Element library management
-- `utils/my-fonts-manager.js`: Custom font library management
-- `utils/template-manager.js`: Template storage and retrieval
-- `utils/font-select-fixer.js`: Font selector styling and behavior fixes
-- `utils/force-option-black.js`: CSS selector color enforcement with throttled MutationObserver
+- `utils/PSDTextManager.js` (11717 bytes): Manages text editing lifecycle with MobX autorun
+- `utils/FontManager.js` (6281 bytes): Font loading, validation, and fallback mapping
+- `utils/PrecisionRenderer.js` (9864 bytes): Pixel-perfect rendering with supersampling
+- `utils/PolotnoTextRenderer.js` (7900 bytes): Enhanced text rendering with Konva integration
+- `utils/PSDDebugger.js` (11140 bytes): Comprehensive debugging system with conversion logs
+- `utils/my-elements-manager.js` (7998 bytes): Element library management
+- `utils/my-fonts-manager.js` (8474 bytes): Custom font library management
+- `utils/template-manager.js` (6856 bytes): Template storage and retrieval
+- `utils/font-select-fixer.js` (8736 bytes): Font selector styling and behavior fixes
+- `utils/force-option-black.js` (3282 bytes): CSS selector color enforcement with throttled MutationObserver
+
+### Core Files
+
+- `src/psd-utils.js` (64KB): Core PSD parsing engine - largest utility file
+- `src/psd-export.js` (10477 bytes): Export Polotno designs back to PSD format
+- `src/file.js` (7153 bytes): File loading and handling
+- `src/api.js` (7882 bytes): API communication layer
+- `src/project.js` (4731 bytes): Cloud project management
+- `src/storage.js` (642 bytes): LocalStorage wrapper utilities
+- `src/logger.js` (3417 bytes): Logging configuration
 
 ## Build and Deployment
 
@@ -279,6 +327,8 @@ The codebase uses several periodic timers and observers that can impact performa
 - `styles/modern-ui.css`: Modern UI components (topbar, toolbar, buttons, inputs, cards)
 - `styles/enhanced-sidepanel.css`: Canva-style side panel with card grids and modern search
 - `styles/animations.css`: Smooth animations and micro-interactions (fade, slide, scale, bounce)
+- `styles/premium-effects.css`: Premium visual effects
+- `styles/layers-premium.css`: Premium layer panel styles
 
 **Legacy Styles**:
 - `index.css`: Main application styles (53KB) - includes global resets and base styles
@@ -293,9 +343,11 @@ import './styles/design-tokens.css';                 // 2. Design tokens (variab
 import './styles/modern-ui.css';                     // 3. Modern UI components
 import './styles/enhanced-sidepanel.css';            // 4. Side panel enhancements
 import './styles/animations.css';                    // 5. Animations
-import './index.css';                                // 6. Application styles
-import './styles/psd-precision.css';                 // 7. PSD precision
-import './styles/font-select-override.css';          // 8. Font overrides
+import './styles/premium-effects.css';               // 6. Premium effects
+import './styles/layers-premium.css';                // 7. Premium layers
+import './index.css';                                // 8. Application styles
+import './styles/psd-precision.css';                 // 9. PSD precision
+import './styles/font-select-override.css';          // 10. Font overrides
 ```
 This order is critical: design tokens must load first, then UI components that use those tokens, then app-specific overrides.
 
@@ -317,7 +369,7 @@ The application now uses a comprehensive design system that combines Figma's pre
 - **Topbar**: 56px height, Figma-inspired with logo and project name editor
 - **Side Panel**: 280px width, Canva-style card grids with hover effects
 - **Toolbar**: 48px compact height with contextual controls
-- **Layer Panel**: Collapsible 280px ↔ 48px with smooth transitions
+- **Layer Panel**: Collapsible 280px ↔ 48px with smooth transitions (optimized from 320px)
 - **Buttons**: Rounded corners, hover states, click bounce animations
 - **Cards**: Grid layout, hover lift effect, shadow transitions
 
@@ -375,3 +427,44 @@ Production build generates:
 - Main CSS: ~383 KB (gzip: ~47 KB)
 - Output directory: `dist/`
 - Build time: ~20-25 seconds
+
+## Known Issues and Troubleshooting
+
+### HMR Configuration for Remote Development
+
+If experiencing WebSocket connection issues in remote development:
+- `vite.config.js` line 25 has hardcoded HMR host: `54.189.143.120`
+- This may cause issues if your server IP changes
+- Consider making it configurable via environment variable:
+  ```javascript
+  hmr: {
+    protocol: 'ws',
+    host: process.env.VITE_HMR_HOST || '0.0.0.0',
+    port: 3002,
+  }
+  ```
+
+### Environment Variables
+
+- `%VITE_PLAUSIBLE_DOMAIN%` warning in console is non-critical (analytics configuration)
+- Can be safely ignored or added to `.env` file if needed
+
+### Font Loading
+
+- Custom fonts load with 2000ms delay to ensure Polotno is ready
+- Font selector styles applied after 2000ms delay in `App.jsx`
+- If fonts don't appear, check console for loading errors
+- Use `window.debugFonts()` to inspect loaded fonts
+
+### LocalStorage Quota
+
+- Preset fonts use URL references to avoid quota issues
+- User-uploaded fonts use Base64 encoding and count toward quota
+- Maximum 50 custom fonts to prevent quota exceeded errors
+- Maximum 100 elements in My Elements library
+
+### Section Filtering
+
+- Videos and Photos sections are removed via MutationObserver
+- If these sections reappear, check `App.jsx` CustomSidePanel implementation
+- 1000ms interval checks as backup if observer fails
